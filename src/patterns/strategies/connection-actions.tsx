@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { createConnection, updateConnection } from "@/services/connections/service";
-import { addMetadataSyncJob } from "@/services/jobs/service";
 import { initiateOAuth } from "@/services/oauth/service";
 import { Connector } from "@/types/connectors";
 
@@ -14,7 +13,6 @@ interface ConnectionActionsStrategy {
         setIsLoading: (isLoading: boolean) => void,
         setError: (error: string | null) => void,
         config: Record<string, any>,
-        teamId?: string,
         connection_id?: string,
         userId?: string,
         onClose?: () => void
@@ -82,7 +80,6 @@ class ApiKeyActionsStrategy implements ConnectionActionsStrategy {
         setIsLoading: (isLoading: boolean) => void,
         setError: (error: string | null) => void,
         config: Record<string, any>,
-        teamId?: string,
         connection_id?: string,
         userId?: string,
         onClose?: () => void
@@ -96,14 +93,11 @@ class ApiKeyActionsStrategy implements ConnectionActionsStrategy {
             // If the connection is being created, create a new connection 
             // otherwise update the existing connection
             if (action === "create") {
-                await createConnection(teamId, connector, config);
+                await createConnection(connector, config);
             }
             else {
                 await updateConnection(connection_id, connector, config);
             }
-
-            // add metadata sync job to start syncing the metadata
-            await addMetadataSyncJob(connection_id, teamId);
 
             toast({
                 title: `Connection ${action}d`,

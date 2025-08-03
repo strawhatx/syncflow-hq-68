@@ -23,7 +23,7 @@ const mockConnectionData = {
     connector_id: "connector-id",
     name: "Test Connection",
     is_active: true,
-    team_id: "team-id",
+    user_id: "user-id",
     config: {
       access_token: "mock-access-token",
       refresh_token: "mock-refresh-token",

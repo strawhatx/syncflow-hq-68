@@ -28,7 +28,6 @@ import { fetchWithAuth } from "@/lib/api";
  *   "My Connection",
  *   "google",
  *   connectorConfig,
- *   { team_id: "123" }
  * );
  * ```
  */
@@ -259,7 +258,6 @@ export const initiateOAuth = async (
 
 // Process OAuth callback
 export const processOAuthCallback = async (
-  team_id:string, 
   code: string,
   state: string,
   provider: string,
@@ -292,7 +290,6 @@ export const processOAuthCallback = async (
     const result = await fetchWithAuth("/oauth-callback", {
       method: "POST",
       body: JSON.stringify({
-        team_id,
         code,
         provider,
         code_verifier,

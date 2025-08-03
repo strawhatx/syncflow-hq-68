@@ -1,6 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Sync, defaultCreateSync } from "@/types/sync";
-import { Team } from "@/types/team";
 import { User } from "@supabase/supabase-js";
 
 // Map database row to Sync type
@@ -11,7 +10,7 @@ const mapDbRowToSync = (row: any): Sync => {
     source_id: row.source_id || '',
     destination_id: row.destination_id || '',
     created_by: row.user_id || '',
-    team_id: row.team_id || '',
+    user_id: row.user_id || '',
     config: row.config || {},
     status: row.status || 'draft'
   };
@@ -27,13 +26,14 @@ export const fetchSyncs = async (): Promise<Sync[]> => {
   return (data || []).map(mapDbRowToSync);
 };
 
-export const fetchSyncsByTeamId = async (teamId: string): Promise<Sync[]> => {
-  if (!teamId) return [];
+export const fetchSyncsByUserId = async (userId: string): Promise<Sync[]> => {
+  if (!userId) return [];
   
   const { data, error } = await supabase
     .from('syncs')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .eq('user_id', userId);
 
   if (error) throw error;
   return (data || []).map(mapDbRowToSync);
@@ -50,7 +50,7 @@ export const fetchSyncById = async (id: string): Promise<Sync | null> => {
   return data ? mapDbRowToSync(data) : null;
 };
 
-export const createInitialSync = async (user: User, team: Team): Promise<any> => {
+export const createInitialSync = async (user: User): Promise<any> => {
   if (!user?.id) throw new Error("User not authenticated");
   
   const { data, error } = await supabase

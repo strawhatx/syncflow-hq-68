@@ -32,7 +32,7 @@ global.fetch = vi.fn(() =>
 
 describe("connectionService", () => {
   it("should create a connection", async () => {
-    const team_id = "123";
+    const user_id = "123";
     const connector: Connector = {
       id: "123",
       icon: "mongodb",
@@ -55,6 +55,6 @@ describe("connectionService", () => {
     const connectionName = "test";
     const config = { test: "test", url: "mongodb://test:test@test.com:27017/test" };
 
-    await connectionService.createConnection(team_id, connector, config);
+    await connectionService.createConnection(user_id, connector, config);
   });
 });

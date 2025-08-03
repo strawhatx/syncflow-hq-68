@@ -156,7 +156,7 @@ When rate limited, the function returns:
 **Request Body**:
 ```json
 {
-  "team_id": "uuid",
+  "user_id": "uuid",
   "connectionName": "My Google Sheets",
   "provider": "google_sheets",
   "code": "authorization_code_from_provider",

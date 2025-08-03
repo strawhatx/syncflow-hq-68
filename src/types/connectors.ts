@@ -19,6 +19,10 @@ export interface ConnectorConfig {
   icon: string;
 }
 
+export interface ConnectorWithConnections extends Connector { 
+  connections: Connection[];
+}
+
 export interface Connector {
   id: string;
   icon: string;
@@ -41,7 +45,7 @@ export interface Connector {
 
 export interface Connection {
   id: string;
-  integration_id: string;
+  connector_id: string;
   account_identifier: string;
   account_config: Json;
   project_id: string;

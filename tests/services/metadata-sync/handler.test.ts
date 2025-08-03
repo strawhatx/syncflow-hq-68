@@ -25,7 +25,7 @@ const mockProcessJobs = processJobs as any;
 const createMockJob = (overrides: any = {}) => ({
   id: "job-123",
   connection_id: "conn-123",
-  team_id: "team-123",
+  user_id: "user-123",
   connection: {
     id: "conn-123",
     connector: {

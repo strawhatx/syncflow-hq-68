@@ -4,8 +4,6 @@ import { Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { processOAuthCallback } from "@/services/oauth/service";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTeam } from "@/contexts/TeamContext";
-import { addMetadataSyncJob } from "@/services/jobs/service";
 
 /**
  * Handles the OAuth callback flow for third-party integrations.
@@ -17,7 +15,6 @@ const OAuthCallback = () => {
     const { provider } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { team, loading: isTeamLoading } = useTeam();
 
     // Extract and validate required params
     const getCallbackParams = useCallback(() => {
@@ -64,23 +61,10 @@ const OAuthCallback = () => {
             return;
         }
 
-        if (!team?.id) {
-            toast({
-                title: "Team not loaded",
-                description: "Team information is not available. Please try again.",
-                variant: "destructive",
-            });
-
-            navigate("/connectors");
-            return;
-        }
-
         try {
             // process the oauth callback & get the connector
-            const result = await processOAuthCallback(team.id, code, state, provider, searchParams);
-
-            // add metadata sync job to start syncing the metadata
-            await addMetadataSyncJob(result.id, team.id);
+            const result = await processOAuthCallback(code, state, provider, searchParams);
+;
             queryClient.invalidateQueries({ queryKey: ["connectors"] });
 
             toast({
@@ -102,15 +86,12 @@ const OAuthCallback = () => {
         finally {
             setIsProcessing(false);
         }
-    }, [getCallbackParams, provider, team, searchParams, queryClient, navigate]);
+    }, [getCallbackParams, provider, searchParams, queryClient, navigate]);
 
     useEffect(() => {
-        // if team is loading, don't do anything
-        if (isTeamLoading || !team) return;
-
         handleCallback();
 
-    }, [handleCallback, isTeamLoading, team]);
+    }, [handleCallback]);
 
     return (
         <div className="flex flex-col items-center justify-center h-screen">

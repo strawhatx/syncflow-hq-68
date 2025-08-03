@@ -8,12 +8,9 @@ import { loginSchema,
   registerSchema, 
   type LoginFormValues, 
   type RegisterFormValues,
-  type RegisterWithInviteFormValues,
-  registerWithInviteSchema
 } from "./util/schemas";
 import { LoginForm } from "./components/LoginForm";
 import { RegisterForm } from "./components/RegisterForm";
-import { RegisterWithInviteForm } from "./components/RegisterWithInviteForm";
 import { useAuth } from "./hooks/use-auth";
 
 const Auth = () => {
@@ -37,26 +34,9 @@ const Auth = () => {
     },
   });
 
-  const registerWithInviteForm = useForm<RegisterWithInviteFormValues>({
-    resolver: zodResolver(registerWithInviteSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      invite_code: "",
-    },
-  });
-
   // Register
   const onRegisterSubmit = async (data: RegisterFormValues) => {
     const success = await handleRegister(data);
-    if (success) {
-      setActiveTab("login");
-    }
-  };
-
-  // Register with invite
-  const onRegisterWithInviteSubmit = async (data: RegisterWithInviteFormValues) => {
-    const success = await handleRegisterWithInvite(data);
     if (success) {
       setActiveTab("login");
     }
@@ -81,7 +61,6 @@ const Auth = () => {
             <TabsList className="grid grid-cols-2 w-full mb-4">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
-              <TabsTrigger value="registerWithInvite">with Invite</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login" className="mt-0">
@@ -96,14 +75,6 @@ const Auth = () => {
               <RegisterForm
                 form={registerForm}
                 onSubmit={onRegisterSubmit}
-                isSubmitting={isSubmitting}
-              />
-            </TabsContent>
-
-            <TabsContent value="registerWithInvite" className="mt-0">
-              <RegisterWithInviteForm
-                form={registerWithInviteForm}
-                onSubmit={onRegisterWithInviteSubmit}
                 isSubmitting={isSubmitting}
               />
             </TabsContent>

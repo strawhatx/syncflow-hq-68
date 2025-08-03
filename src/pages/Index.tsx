@@ -171,14 +171,6 @@ const IndexPage = () => {
             </div>
             
             <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
-              <Users className="h-12 w-12 text-teal-400 mb-6" />
-              <h3 className="text-xl font-semibold text-white mb-4">Team Collaboration</h3>
-              <p className="text-gray-300">
-                Project-based organization with role-based access control. Perfect for growing teams.
-              </p>
-            </div>
-            
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
               <GitBranch className="h-12 w-12 text-orange-400 mb-6" />
               <h3 className="text-xl font-semibold text-white mb-4">Version Control</h3>
               <p className="text-gray-300">

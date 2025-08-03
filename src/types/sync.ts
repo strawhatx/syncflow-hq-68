@@ -1,5 +1,4 @@
 import { User } from "@supabase/supabase-js";
-import { Team } from "./team";
 import Sync from "@/features/sync";
 
 export type SyncDirection = "source-to-destination" | "destination-to-source" | "two-way";
@@ -77,11 +76,10 @@ export interface Sync {
     destination_id: string
     created_by: string
     config: SyncConfig
-    team_id: string
     status: SyncStatus
 }
 
-const defaultData = (user: User): Omit<Sync, "id" | "created_by" | "team_id"> => {
+const defaultData = (user: User): Omit<Sync, "id" | "created_by"> => {
     return {
         name: "Untitled Sync",
         source_id: null,
@@ -118,15 +116,14 @@ const defaultData = (user: User): Omit<Sync, "id" | "created_by" | "team_id"> =>
     }
 }
 
-export const defaultCreateSync = (user: User, team: Team): Omit<Sync, "id"> => {
+export const defaultCreateSync = (user: User): Omit<Sync, "id"> => {
     return {
         ...defaultData(user),
-        created_by: user.id,
-        team_id: team?.id,
+        created_by: user.id
     }
 }
 
-export const defaultUpdateSync = (sync_id: string, user: User): Omit<Sync, "created_by" | "team_id"> => {
+export const defaultUpdateSync = (sync_id: string, user: User): Omit<Sync, "created_by"> => {
     return {
         ...defaultData(user),
         id: sync_id

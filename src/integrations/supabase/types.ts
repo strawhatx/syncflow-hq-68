@@ -16,33 +16,33 @@ export type Database = {
     Tables: {
       connections: {
         Row: {
-          config: Json
-          connector_id: string | null
-          created_at: string | null
           id: string
-          is_active: boolean | null
+          connector_id: string | null
           name: string
-          user_id: string | null
+          config: Json
+          team_id: string | null
+          is_active: boolean | null
+          created_at: string | null
           updated_at: string | null
         }
         Insert: {
-          config: Json
-          connector_id?: string | null
-          created_at?: string | null
           id?: string
-          is_active?: boolean | null
+          connector_id?: string | null
           name: string
-          user_id?: string | null
+          config: Json
+          team_id?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
           updated_at?: string | null
         }
         Update: {
-          config?: Json
-          connector_id?: string | null
-          created_at?: string | null
           id?: string
-          is_active?: boolean | null
+          connector_id?: string | null
           name?: string
-          user_id?: string | null
+          config?: Json
+          team_id?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -54,8 +54,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "connections_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "connections_team_id_fkey"
+            columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
@@ -64,66 +64,128 @@ export type Database = {
       }
       connectors: {
         Row: {
-          config: Json
-          created_at: string | null
           id: string
-          is_active: boolean | null
           name: string
-          provider: string
           type: string
+          provider: string
+          config: Json
+          team_id: string | null
+          is_active: boolean | null
+          created_at: string | null
           updated_at: string | null
         }
         Insert: {
-          config: Json
-          created_at?: string | null
           id?: string
-          is_active?: boolean | null
           name: string
-          provider: string
           type: string
+          provider: string
+          config: Json
+          team_id?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
           updated_at?: string | null
         }
         Update: {
-          config?: Json
-          created_at?: string | null
           id?: string
-          is_active?: boolean | null
           name?: string
-          provider?: string
           type?: string
+          provider?: string
+          config?: Json
+          team_id?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "connectors_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_sync_jobs: {
+        Row: {
+          id: string
+          sync_id: string
+          team_id: string
+          status: string
+          progress: number | null
+          last_synced_at: string | null
+          message: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          sync_id: string
+          team_id: string
+          status?: string
+          progress?: number | null
+          last_synced_at?: string | null
+          message?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          sync_id?: string
+          team_id?: string
+          status?: string
+          progress?: number | null
+          last_synced_at?: string | null
+          message?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_sync_jobs_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "syncs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_sync_jobs_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       field_mapping: {
         Row: {
-          created_at: string | null
-          destination_field: string
           id: string
-          source_field: string
           sync_id: string | null
-          transformation_config: Json | null
+          source_field: string
+          destination_field: string
           transformation_type: string | null
+          transformation_config: Json | null
+          created_at: string | null
           updated_at: string | null
         }
         Insert: {
-          created_at?: string | null
-          destination_field: string
           id?: string
-          source_field: string
           sync_id?: string | null
-          transformation_config?: Json | null
+          source_field: string
+          destination_field: string
           transformation_type?: string | null
+          transformation_config?: Json | null
+          created_at?: string | null
           updated_at?: string | null
         }
         Update: {
-          created_at?: string | null
-          destination_field?: string
           id?: string
-          source_field?: string
           sync_id?: string | null
-          transformation_config?: Json | null
+          source_field?: string
+          destination_field?: string
           transformation_type?: string | null
+          transformation_config?: Json | null
+          created_at?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -136,104 +198,123 @@ export type Database = {
           },
         ]
       }
-      profiles: {
+      metadata_sync_jobs: {
         Row: {
-          avatar_url: string | null
-          full_name: string | null
           id: string
+          connection_id: string
+          team_id: string
+          status: string
+          progress: number | null
+          started_at: string | null
+          error: string | null
+          created_at: string | null
           updated_at: string | null
-          username: string | null
-          website: string | null
         }
         Insert: {
-          avatar_url?: string | null
-          full_name?: string | null
-          id: string
+          id?: string
+          connection_id: string
+          team_id: string
+          status?: string
+          progress?: number | null
+          started_at?: string | null
+          error?: string | null
+          created_at?: string | null
           updated_at?: string | null
-          username?: string | null
-          website?: string | null
         }
         Update: {
-          avatar_url?: string | null
-          full_name?: string | null
           id?: string
+          connection_id?: string
+          team_id?: string
+          status?: string
+          progress?: number | null
+          started_at?: string | null
+          error?: string | null
+          created_at?: string | null
           updated_at?: string | null
-          username?: string | null
-          website?: string | null
-        }
-        Relationships: []
-      }
-      sync_field_mappings: {
-        Row: {
-          airtable_field_name: string
-          created_at: string
-          id: string
-          postgres_field_name: string
-          sync_id: string
-        }
-        Insert: {
-          airtable_field_name: string
-          created_at?: string
-          id?: string
-          postgres_field_name: string
-          sync_id: string
-        }
-        Update: {
-          airtable_field_name?: string
-          created_at?: string
-          id?: string
-          postgres_field_name?: string
-          sync_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "sync_field_mappings_sync_id_fkey"
-            columns: ["sync_id"]
+            foreignKeyName: "metadata_sync_jobs_connection_id_fkey"
+            columns: ["connection_id"]
             isOneToOne: false
-            referencedRelation: "syncs"
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "metadata_sync_jobs_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
       }
-      sync_logs: {
+      profiles: {
         Row: {
-          created_at: string
-          direction: string
-          duration_ms: number | null
-          error_message: string | null
           id: string
-          records_inserted: number | null
-          records_skipped: number | null
-          records_updated: number | null
-          status: string
-          sync_id: string
-          timestamp: string
+          username: string | null
+          full_name: string | null
+          avatar_url: string | null
+          website: string | null
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
-          direction: string
-          duration_ms?: number | null
-          error_message?: string | null
-          id?: string
-          records_inserted?: number | null
-          records_skipped?: number | null
-          records_updated?: number | null
-          status: string
-          sync_id: string
-          timestamp?: string
+          id: string
+          username?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          website?: string | null
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
-          direction?: string
+          id?: string
+          username?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          website?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sync_logs: {
+        Row: {
+          id: string
+          sync_id: string
+          timestamp: string
+          direction: string
+          status: string
+          records_inserted: number | null
+          records_updated: number | null
+          records_skipped: number | null
+          duration_ms: number | null
+          error_message: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          sync_id: string
+          timestamp?: string
+          direction: string
+          status: string
+          records_inserted?: number | null
+          records_updated?: number | null
+          records_skipped?: number | null
           duration_ms?: number | null
           error_message?: string | null
+          created_at?: string | null
+        }
+        Update: {
           id?: string
-          records_inserted?: number | null
-          records_skipped?: number | null
-          records_updated?: number | null
-          status?: string
           sync_id?: string
           timestamp?: string
+          direction?: string
+          status?: string
+          records_inserted?: number | null
+          records_updated?: number | null
+          records_skipped?: number | null
+          duration_ms?: number | null
+          error_message?: string | null
+          created_at?: string | null
         }
         Relationships: [
           {
@@ -245,59 +326,172 @@ export type Database = {
           },
         ]
       }
-      syncs: {
+      sync_field_mappings: {
         Row: {
-          airtable_base_id: string | null
-          airtable_table_name: string | null
-          airtable_token: string | null
-          config: Json
-          created_at: string | null
           id: string
-          is_active: boolean | null
-          last_sync_at: string | null
-          name: string
-          postgres_connection_string: string | null
-          postgres_table_name: string | null
-          sync_direction: string | null
-          sync_interval_minutes: number | null
-          updated_at: string | null
-          user_id: string | null
+          sync_id: string
+          airtable_field_name: string
+          postgres_field_name: string
+          created_at: string | null
         }
         Insert: {
-          airtable_base_id?: string | null
-          airtable_table_name?: string | null
-          airtable_token?: string | null
-          config: Json
-          created_at?: string | null
           id?: string
-          is_active?: boolean | null
-          last_sync_at?: string | null
-          name: string
-          postgres_connection_string?: string | null
-          postgres_table_name?: string | null
-          sync_direction?: string | null
-          sync_interval_minutes?: number | null
-          updated_at?: string | null
-          user_id?: string | null
+          sync_id: string
+          airtable_field_name: string
+          postgres_field_name: string
+          created_at?: string | null
         }
         Update: {
-          airtable_base_id?: string | null
-          airtable_table_name?: string | null
-          airtable_token?: string | null
-          config?: Json
-          created_at?: string | null
           id?: string
-          is_active?: boolean | null
-          last_sync_at?: string | null
-          name?: string
-          postgres_connection_string?: string | null
-          postgres_table_name?: string | null
-          sync_direction?: string | null
-          sync_interval_minutes?: number | null
-          updated_at?: string | null
-          user_id?: string | null
+          sync_id?: string
+          airtable_field_name?: string
+          postgres_field_name?: string
+          created_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sync_field_mappings_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      syncs: {
+        Row: {
+          id: string
+          name: string
+          source_id: string | null
+          destination_id: string | null
+          config: Json
+          team_id: string | null
+          status: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          source_id?: string | null
+          destination_id?: string | null
+          config: Json
+          team_id?: string | null
+          status?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          source_id?: string | null
+          destination_id?: string | null
+          config?: Json
+          team_id?: string | null
+          status?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "syncs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "syncs_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "syncs_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_members: {
+        Row: {
+          id: string
+          team_id: string | null
+          user_id: string | null
+          role: string
+          status: string
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          team_id?: string | null
+          user_id?: string | null
+          role: string
+          status?: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          team_id?: string | null
+          user_id?: string | null
+          role?: string
+          status?: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          id: string
+          name: string
+          created_by: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -323,6 +517,10 @@ export type Database = {
           username: string
           avatar_url: string
         }[]
+      }
+      get_syncs_by_table_id: {
+        Args: { table_id: string }
+        Returns: string[]
       }
     }
     Enums: {

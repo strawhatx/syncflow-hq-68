@@ -1,7 +1,6 @@
 
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, RefreshCw, Pause, Play, Trash2, Settings, Clock, AlertTriangle, Check, Database } from "lucide-react";
-import { PagePermissionGuard } from "../hocs/withPagePermission";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSyncById } from "@/services/syncs/service";
 
@@ -75,12 +74,6 @@ const SyncDetails = () => {
   }
 
   return (
-    <PagePermissionGuard 
-      resource="syncs" 
-      action="view" 
-      data={sync} // Pass the sync data for permission checking
-      isLoading={isLoading}
-    >
       <div>
         <div className="mb-6">
           <div className="breadcrumb">
@@ -182,10 +175,6 @@ const SyncDetails = () => {
               <h3 className="font-medium mb-4">Sync Information</h3>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Team ID</p>
-                  <p className="font-mono text-sm">{sync.team_id}</p>
-                </div>
-                <div>
                   <p className="text-sm text-muted-foreground">Status</p>
                   <p className="text-sm capitalize">{sync.status || "draft"}</p>
                 </div>
@@ -194,7 +183,6 @@ const SyncDetails = () => {
           </div>
         </div>
       </div>
-    </PagePermissionGuard>
   );
 };
 
