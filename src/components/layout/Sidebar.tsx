@@ -37,7 +37,7 @@ interface NavItem {
 // Constants
 const NAV_ITEMS: NavItem[] = [
   { title: "Dashboard", icon: LayoutDashboard, url: "/dashboard" },
-  { title: "Legacy Syncs", icon: Activity, url: "/syncs" },
+  { title: "Logs", icon: Clock, url: "/logs" },
 ];
 
 // Components
