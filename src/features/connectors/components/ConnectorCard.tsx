@@ -42,7 +42,7 @@ const ConnectorCard = ({
             <div className="space-y-1">
               {connections.map(connection => (
                 <div key={connection.id} className="flex items-center justify-between text-sm">
-                  <span>{connection.name}</span>
+                  <span>{connection.account_identifier}</span>
                   {onManage && (
                     <Button
                       variant="ghost"

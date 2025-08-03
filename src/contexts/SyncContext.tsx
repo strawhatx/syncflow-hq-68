@@ -202,7 +202,9 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             saveAndAdvance,
             save,
             reset,
-            activate
+            activate: async () => {
+                await activate();
+            }
         }}>
             {children}
         </SyncContext.Provider>

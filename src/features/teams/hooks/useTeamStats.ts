@@ -6,6 +6,6 @@ export function useTeamStats(members: TeamMember[]) {
     totalMembers: members.length,
     activeMembers: members.filter(m => m.status === 'active').length,
     pendingInvites: members.filter(m => m.status === 'invited').length,
-    admins: members.filter(m => m.role === 'admin' || m.role === 'owner').length
+    admins: members.filter(m => m.role === 'owner').length
   }), [members]);
 } 

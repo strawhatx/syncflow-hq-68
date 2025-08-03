@@ -8,7 +8,7 @@ import Syncs from "./pages/Syncs";
 import Sync from "./pages/Sync";
 import SyncDetails from "./pages/SyncDetails";
 import ConnectorsPage from "./pages/Connectors";
-import OAuthCallback from "./pages/OauthCallback";
+import OAuthCallback from "./pages/OAuthCallback";
 import NotFound from "./pages/NotFound";
 import IndexPage from "./pages/Index";
 import AuthPage from "./pages/Auth";

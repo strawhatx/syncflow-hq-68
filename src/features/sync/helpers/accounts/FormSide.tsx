@@ -36,7 +36,7 @@ export const FormSide = (props: FormSideProps) => {
                 onValueChange={(value: any) => setAccountId(value)}
                 options={connections?.map(conn => ({
                     id: conn.id,
-                    name: conn.name,
+                    name: conn.account_identifier,
                 })) || []}
                 placeholder={`Select account`}
                 isLoading={false}

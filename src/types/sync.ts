@@ -5,7 +5,7 @@ import Sync from "@/features/sync";
 export type SyncDirection = "source-to-destination" | "destination-to-source" | "two-way";
 export type Schedule = "every 1 hour" | "every 1 day" | "every 1 week" | "every 1 month" | "every 1 year" | "every 1 minute" | "every 1 second";
 export type Backoff = "exponential" | "linear" | "constant";
-export type SyncStatus = "draft" | "active" | "paused" | "error";
+export type SyncStatus = "draft" | "active" | "paused" | "error" | "synced";
 export type SyncStage = "accounts" | "data-sources" | "mappings" | "filters" | "ready";
 export type ConflictResolution = 'source' | 'destination' | 'latest';
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { teamService } from '@/services/team/service';
 
 export interface TeamMemberData {
   id: string;
@@ -25,22 +25,22 @@ export function useTeamMember() {
       }
 
       try {
-        const { data, error } = await supabase
-          .from('view_team_members')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'active')
-          .maybeSingle();
-
-        if (error) throw error;
-
-        if (!data) {
+        const userTeamData = await teamService.getTeamMembersByUser(user.id);
+        
+        if (!userTeamData.team_members || userTeamData.team_members.length === 0) {
           setTeamMember(null);
           setIsLoading(false);
           return;
         }
 
-        setTeamMember({ ...data, role: data.role });
+        const member = userTeamData.team_members[0];
+        setTeamMember({
+          id: member.id,
+          team_id: member.team_id,
+          user_id: member.user_id,
+          role: member.role,
+          status: member.status
+        });
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to fetch team member data'));
       } finally {
@@ -52,4 +52,4 @@ export function useTeamMember() {
   }, [user]);
 
   return { teamMember, isLoading, error };
-} 
+}

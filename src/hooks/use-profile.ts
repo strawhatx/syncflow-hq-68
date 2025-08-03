@@ -29,8 +29,8 @@ export function useProfile() {
         if (data) {
           setProfile({
             avatar: data.avatar_url,
-            avatar_backup: data.username?.[0]?.toUpperCase() || "U",
-            full_name: data.username || "Anonymous",
+            avatar_backup: data.full_name?.[0]?.toUpperCase() || "U",
+            full_name: data.full_name || "Anonymous",
             email: user.email || "Not available"
           });
         }

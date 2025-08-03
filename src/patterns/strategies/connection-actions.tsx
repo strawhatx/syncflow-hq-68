@@ -103,7 +103,7 @@ class ApiKeyActionsStrategy implements ConnectionActionsStrategy {
             }
 
             // add metadata sync job to start syncing the metadata
-            await addMetadataSyncJob(connection_id, teamId, userId);
+            await addMetadataSyncJob(connection_id, teamId);
 
             toast({
                 title: `Connection ${action}d`,

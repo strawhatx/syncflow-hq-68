@@ -44,16 +44,16 @@ const UserProfile = () => {
         setLoading(true);
         const { data, error } = await supabase
           .from("profiles")
-          .select("username, avatar_url")
+          .select("full_name, avatar_url")
           .eq("id", user.id)
           .maybeSingle();
 
         if (error) throw error;
 
         if (data) {
-          setProfile(data);
+          setProfile({ username: data.full_name || "", avatar_url: data.avatar_url });
           form.reset({
-            username: data.username || "",
+            username: data.full_name || "",
           });
         }
       } catch (error: any) {
@@ -80,7 +80,7 @@ const UserProfile = () => {
       const { error } = await supabase
         .from("profiles")
         .update({
-          username: data.username,
+          full_name: data.username,
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);

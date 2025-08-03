@@ -16,6 +16,8 @@ interface TeamContextType {
     updateMemberRole: (memberId: string, newRole: TeamRole) => Promise<void>;
     removeMember: (memberId: string) => Promise<void>;
     inviteMember: (email: string) => Promise<void>;
+    canUpdateRole: boolean;
+    canRemoveMember: boolean;
 }
 
 const TeamContext = createContext<TeamContextType | undefined>(undefined);
@@ -34,7 +36,17 @@ export const TeamProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setLoading(true);
             // Get team with members
             const teamData = await teamService.getTeamWithMembers(teamId);
-            setTeam(teamData);
+            // Extract team data from the response, creating a compatible Team object
+            if (teamData && typeof teamData === 'object' && 'id' in teamData) {
+                const team: Team = {
+                    id: (teamData as any).id,
+                    name: (teamData as any).name || "Team",
+                    created_by: (teamData as any).created_by || "",
+                    created_at: (teamData as any).created_at || new Date().toISOString(),
+                    updated_at: (teamData as any).updated_at || new Date().toISOString()
+                };
+                setTeam(team);
+            }
             
             // Convert Map to array and cast types
             const membersArray = Array.from(teamData.team_members.values()).map((member: any) => ({
@@ -156,6 +168,8 @@ export const TeamProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateMemberRole,
         removeMember,
         inviteMember,
+        canUpdateRole: currentMember?.role === 'owner',
+        canRemoveMember: currentMember?.role === 'owner',
     };
 
     return <TeamContext.Provider value={value}>{children}</TeamContext.Provider>;

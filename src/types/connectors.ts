@@ -41,10 +41,10 @@ export interface Connector {
 
 export interface Connection {
   id: string;
-  connector_id: string;
-  name: string;
-  config: Json;
-  team_id: string;
+  integration_id: string;
+  account_identifier: string;
+  account_config: Json;
+  project_id: string;
   is_active: boolean;
   created_at?: string;
   updated_at?: string;
