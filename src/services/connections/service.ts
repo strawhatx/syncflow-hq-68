@@ -149,7 +149,7 @@ export const validateConnection = async (connector: Connector, config: Record<st
 // call endpoint to validate connection via  datasource connections
 const validate = async (provider: ConnectorProvider, config: Record<string, any>): Promise<boolean> => {
   try {
-    const result = await fetchWithAuth("/validate-connection", {
+    const result = await fetchWithAuth("validate-connection", {
       method: "POST",
       body: JSON.stringify({ provider, config }),
     });

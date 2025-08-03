@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import AccountsStep from "./component/Accounts";
 import DataSourcesStep from "./component/DataSources";
+import PostgreSQLStep from "./component/PostgreSQL";
+import AirtableStep from "./component/Airtable";
 import FilterStep from "./component/Filter";
 import { MappingStep } from "./component/Mapping";
 import { ReadyStep } from "./component/Ready";
@@ -28,34 +30,41 @@ enum TransitionState {
 const steps = [
     {
         id: 1,
-        stage: "accounts",
-        label: "choose your connected accounts or create a new one",
-        description: "Select the accounts you want to sync",
-        component: AccountsStep,
+        stage: "postgresql",
+        label: "configure PostgreSQL connection",
+        description: "Set up your PostgreSQL connection and select database/table",
+        component: PostgreSQLStep,
     },
     {
         id: 2,
+        stage: "airtable",
+        label: "configure Airtable connection",
+        description: "Set up your Airtable connection and select base/table",
+        component: AirtableStep,
+    },
+    {
+        id: 3,
         stage: "data-sources",
         label: "choose your data sources",
         description: "Select the data sources you want to sync",
         component: DataSourcesStep,
     },
     {
-        id: 3,
+        id: 4,
         stage: "mappings",
         label: "Map your tables",
         description: "Map the tables you want to sync",
         component: MappingStep,
     },
     {
-        id: 4,
+        id: 5,
         stage: "filters",
         label: "Add your filters",
         description: "Add filters to your sync",
         component: FilterStep,
     },
     {
-        id: 5,
+        id: 6,
         stage: "ready",
         label: "Ready to sync",
         description: "Review and activate your sync",

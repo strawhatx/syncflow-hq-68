@@ -17,9 +17,10 @@ interface ConnectorConnectModalProps {
   onClose: () => void;
   connector: Connector;
   connection_id?: string;
+  onConnectionCreated?: (connection: any) => void;
 }
 
-export default function ConnectorConnectModal({ isOpen, onClose, connector, connection_id }: ConnectorConnectModalProps) {
+export default function ConnectorConnectModal({ isOpen, onClose, connector, connection_id, onConnectionCreated }: ConnectorConnectModalProps) {
   const { user } = useAuth();
   const [config, setConfig] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -67,6 +68,10 @@ export default function ConnectorConnectModal({ isOpen, onClose, connector, conn
         user?.id,
         onClose
       );
+
+      // If we get here without an error, the connection was created successfully
+      // We'll need to handle the callback differently since handleSubmitAction doesn't return the connection
+      // For now, we'll just close the modal and let the parent component refresh its data
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
         const formattedErrors = validationError.errors.reduce((acc: Record<string, string>, error) => {
@@ -91,7 +96,7 @@ export default function ConnectorConnectModal({ isOpen, onClose, connector, conn
       <DialogContent className="max-h-fit max-w-full md:max-w-xl lg:max-w-3xl">
         <DialogHeader>
           <div className="flex items-center justify-center gap-4 mb-4">
-            <img src={`/svg/${connector.icon}.svg`} alt={connector.name} className="h-14 w-14" />
+            <img src={`/svg/${connector.provider}.svg`} alt={connector.name} className="h-14 w-14" />
             <span className="text-3xl font-bold">+</span>
             <div className="flex aspect-square size-14 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200">
               <Zap className="size-7" />

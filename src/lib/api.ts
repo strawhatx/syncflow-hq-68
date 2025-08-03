@@ -5,19 +5,18 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error("No active session");
 
-  const response = await fetch(`${import.meta.env.VITE_SUPABASE_API}${endpoint}`, {
-    ...options,
+  const response = await supabase.functions.invoke(endpoint, {
+    body: options.body,
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${session.access_token}`,
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     },
   });
 
-  const result = await response.json();
-  if (result.error) throw new Error(result.error);
+  if (response.error) throw new Error(response.error.message);
 
-  return result;
+  return response.data;
 };
 
 export const fetchWithAuthCache = async (endpoint: string, base:  "schema" | "connection" | "oauth" | "email", keys: string[], options: RequestInit = {}) => {

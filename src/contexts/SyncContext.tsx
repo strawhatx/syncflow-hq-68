@@ -9,7 +9,7 @@ import { produce } from "immer";
 
 export type AccountSide = "source_id" | "destination_id";
 export type DataSourceSide = "source_database_id" | "destination_database_id";
-const STAGES: SyncStage[] = ["accounts", "data-sources", "mappings", "filters", "ready"];
+const STAGES: SyncStage[] = ["accounts", "data-sources", "postgresql", "airtable", "mappings", "filters", "ready"];
 
 interface SyncContextType {
     syncConfig: Sync;
@@ -20,6 +20,12 @@ interface SyncContextType {
     setTitle: (title: string) => void;
     setAccount: (value: string, field: AccountSide) => void;
     setDataSource: (value: string, field: DataSourceSide) => void;
+    setPostgreSQLConnection: (connectionId: string) => void;
+    setPostgreSQLDatabase: (databaseId: string) => void;
+    setPostgreSQLTable: (tableId: string) => void;
+    setAirtableConnection: (connectionId: string) => void;
+    setAirtableBase: (baseId: string) => void;
+    setAirtableTable: (tableId: string) => void;
     setTableMappings: (value: SyncTableMapping[]) => void;
     setStage: (stage: SyncStage) => void;
     saveAndAdvance: () => Promise<{ success: boolean; errors?: string[] }>;
@@ -62,6 +68,84 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             produce(current, draft => {
                 if (draft.config?.schema) {
                     draft.config.schema[field] = value;
+                }
+            })
+        );
+    };
+
+    // set PostgreSQL connection
+    const setPostgreSQLConnection = (connectionId: string) => {
+        setSyncConfig(current =>
+            produce(current, draft => {
+                if (draft.config?.postgresql) {
+                    draft.config.postgresql.connection_id = connectionId;
+                } else {
+                    draft.config.postgresql = { connection_id: connectionId };
+                }
+            })
+        );
+    };
+
+    // set PostgreSQL database
+    const setPostgreSQLDatabase = (databaseId: string) => {
+        setSyncConfig(current =>
+            produce(current, draft => {
+                if (draft.config?.postgresql) {
+                    draft.config.postgresql.database_id = databaseId;
+                } else {
+                    draft.config.postgresql = { database_id: databaseId };
+                }
+            })
+        );
+    };
+
+    // set PostgreSQL table
+    const setPostgreSQLTable = (tableId: string) => {
+        setSyncConfig(current =>
+            produce(current, draft => {
+                if (draft.config?.postgresql) {
+                    draft.config.postgresql.table_id = tableId;
+                } else {
+                    draft.config.postgresql = { table_id: tableId };
+                }
+            })
+        );
+    };
+
+    // set Airtable connection
+    const setAirtableConnection = (connectionId: string) => {
+        setSyncConfig(current =>
+            produce(current, draft => {
+                if (draft.config?.airtable) {
+                    draft.config.airtable.connection_id = connectionId;
+                } else {
+                    draft.config.airtable = { connection_id: connectionId };
+                }
+            })
+        );
+    };
+
+    // set Airtable base
+    const setAirtableBase = (baseId: string) => {
+        setSyncConfig(current =>
+            produce(current, draft => {
+                if (draft.config?.airtable) {
+                    draft.config.airtable.base_id = baseId;
+                } else {
+                    draft.config.airtable = { base_id: baseId };
+                }
+            })
+        );
+    };
+
+    // set Airtable table
+    const setAirtableTable = (tableId: string) => {
+        setSyncConfig(current =>
+            produce(current, draft => {
+                if (draft.config?.airtable) {
+                    draft.config.airtable.table_id = tableId;
+                } else {
+                    draft.config.airtable = { table_id: tableId };
                 }
             })
         );
@@ -155,6 +239,20 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (!syncConfig?.config?.schema?.destination_database_id) errors.push("Destination database is required");
             return errors;
         },
+        postgresql: () => {
+            const errors: string[] = [];
+            if (!syncConfig?.config?.postgresql?.connection_id) errors.push("PostgreSQL connection is required");
+            if (!syncConfig?.config?.postgresql?.database_id) errors.push("PostgreSQL database is required");
+            if (!syncConfig?.config?.postgresql?.table_id) errors.push("PostgreSQL table is required");
+            return errors;
+        },
+        airtable: () => {
+            const errors: string[] = [];
+            if (!syncConfig?.config?.airtable?.connection_id) errors.push("Airtable connection is required");
+            if (!syncConfig?.config?.airtable?.base_id) errors.push("Airtable base is required");
+            if (!syncConfig?.config?.airtable?.table_id) errors.push("Airtable table is required");
+            return errors;
+        },
         mappings: () => {
             const errors: string[] = [];
             const mappings = syncConfig?.config?.schema?.table_mappings || [];
@@ -195,6 +293,12 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setSelectedTableMappingId,
             setAccount,
             setDataSource,
+            setPostgreSQLConnection,
+            setPostgreSQLDatabase,
+            setPostgreSQLTable,
+            setAirtableConnection,
+            setAirtableBase,
+            setAirtableTable,
             setTableMappings,
             setStage,
             saveAndAdvance,

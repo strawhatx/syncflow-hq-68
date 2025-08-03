@@ -57,7 +57,6 @@ const App = () => {
                     <SyncProvider><SyncDetails /></SyncProvider>
                   }
                   />
-                  <Route path="/connectors" element={<ConnectorsPage />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>
 

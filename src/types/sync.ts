@@ -5,7 +5,7 @@ export type SyncDirection = "source-to-destination" | "destination-to-source" | 
 export type Schedule = "every 1 hour" | "every 1 day" | "every 1 week" | "every 1 month" | "every 1 year" | "every 1 minute" | "every 1 second";
 export type Backoff = "exponential" | "linear" | "constant";
 export type SyncStatus = "draft" | "active" | "paused" | "error" | "synced";
-export type SyncStage = "accounts" | "data-sources" | "mappings" | "filters" | "ready";
+export type SyncStage = "accounts" | "data-sources" | "postgresql" | "airtable" | "mappings" | "filters" | "ready";
 export type ConflictResolution = 'source' | 'destination' | 'latest';
 
 
@@ -40,6 +40,18 @@ export interface SyncSchema {
     table_mappings: SyncTableMapping[];
 }
 
+export interface PostgreSQLConfig {
+    connection_id: string;
+    database_id: string;
+    table_id: string;
+}
+
+export interface AirtableConfig {
+    connection_id: string;
+    base_id: string;
+    table_id: string;
+}
+
 export interface SyncBatchSize {
     size: number;
     interval: number;
@@ -63,6 +75,8 @@ export interface SyncConfig {
     stage?: SyncStage;
     conflict_resolution: ConflictResolution;
     schema: SyncSchema;
+    postgresql?: PostgreSQLConfig;
+    airtable?: AirtableConfig;
     schedule: Schedule;
     batch_size: SyncBatchSize;
     retry_policy: SyncRetryPolicy;

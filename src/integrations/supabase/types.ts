@@ -20,7 +20,7 @@ export type Database = {
           connector_id: string | null
           name: string
           config: Json
-          team_id: string | null
+          user_id: string | null
           is_active: boolean | null
           created_at: string | null
           updated_at: string | null
@@ -30,7 +30,7 @@ export type Database = {
           connector_id?: string | null
           name: string
           config: Json
-          team_id?: string | null
+          user_id?: string | null
           is_active?: boolean | null
           created_at?: string | null
           updated_at?: string | null
@@ -40,7 +40,7 @@ export type Database = {
           connector_id?: string | null
           name?: string
           config?: Json
-          team_id?: string | null
+          user_id?: string | null
           is_active?: boolean | null
           created_at?: string | null
           updated_at?: string | null
@@ -54,10 +54,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "connections_team_id_fkey"
-            columns: ["team_id"]
+            foreignKeyName: "connections_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "teams"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -69,7 +69,6 @@ export type Database = {
           type: string
           provider: string
           config: Json
-          team_id: string | null
           is_active: boolean | null
           created_at: string | null
           updated_at: string | null
@@ -80,7 +79,6 @@ export type Database = {
           type: string
           provider: string
           config: Json
-          team_id?: string | null
           is_active?: boolean | null
           created_at?: string | null
           updated_at?: string | null
@@ -91,26 +89,17 @@ export type Database = {
           type?: string
           provider?: string
           config?: Json
-          team_id?: string | null
           is_active?: boolean | null
           created_at?: string | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "connectors_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       data_sync_jobs: {
         Row: {
           id: string
           sync_id: string
-          team_id: string
+          user_id: string
           status: string
           progress: number | null
           last_synced_at: string | null
@@ -121,7 +110,7 @@ export type Database = {
         Insert: {
           id?: string
           sync_id: string
-          team_id: string
+          user_id: string
           status?: string
           progress?: number | null
           last_synced_at?: string | null
@@ -132,7 +121,7 @@ export type Database = {
         Update: {
           id?: string
           sync_id?: string
-          team_id?: string
+          user_id?: string
           status?: string
           progress?: number | null
           last_synced_at?: string | null
@@ -149,10 +138,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "data_sync_jobs_team_id_fkey"
-            columns: ["team_id"]
+            foreignKeyName: "data_sync_jobs_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "teams"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -202,7 +191,7 @@ export type Database = {
         Row: {
           id: string
           connection_id: string
-          team_id: string
+          user_id: string
           status: string
           progress: number | null
           started_at: string | null
@@ -213,7 +202,7 @@ export type Database = {
         Insert: {
           id?: string
           connection_id: string
-          team_id: string
+          user_id: string
           status?: string
           progress?: number | null
           started_at?: string | null
@@ -224,7 +213,7 @@ export type Database = {
         Update: {
           id?: string
           connection_id?: string
-          team_id?: string
+          user_id?: string
           status?: string
           progress?: number | null
           started_at?: string | null
@@ -241,10 +230,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "metadata_sync_jobs_team_id_fkey"
-            columns: ["team_id"]
+            foreignKeyName: "metadata_sync_jobs_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "teams"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -365,7 +354,7 @@ export type Database = {
           source_id: string | null
           destination_id: string | null
           config: Json
-          team_id: string | null
+          user_id: string | null
           status: string | null
           created_at: string | null
           updated_at: string | null
@@ -376,7 +365,7 @@ export type Database = {
           source_id?: string | null
           destination_id?: string | null
           config: Json
-          team_id?: string | null
+          user_id?: string | null
           status?: string | null
           created_at?: string | null
           updated_at?: string | null
@@ -387,7 +376,7 @@ export type Database = {
           source_id?: string | null
           destination_id?: string | null
           config?: Json
-          team_id?: string | null
+          user_id?: string | null
           status?: string | null
           created_at?: string | null
           updated_at?: string | null
@@ -408,87 +397,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "syncs_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      team_members: {
-        Row: {
-          id: string
-          team_id: string | null
-          user_id: string | null
-          role: string
-          status: string
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          team_id?: string | null
-          user_id?: string | null
-          role: string
-          status?: string
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          team_id?: string | null
-          user_id?: string | null
-          role?: string
-          status?: string
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "team_members_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "team_members_user_id_fkey"
+            foreignKeyName: "syncs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      teams: {
-        Row: {
-          id: string
-          name: string
-          created_by: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          name: string
-          created_by?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          name?: string
-          created_by?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "teams_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -501,22 +413,6 @@ export type Database = {
       get_accessible_sync_ids_for_user: {
         Args: { uid: string }
         Returns: string[]
-      }
-      get_role_based_team_ids_for_user: {
-        Args: { uid: string; role_param: string }
-        Returns: string[]
-      }
-      get_team_ids_for_user: {
-        Args: { uid: string }
-        Returns: string[]
-      }
-      get_team_member_profile: {
-        Args: { member_user_id: string }
-        Returns: {
-          email: string
-          username: string
-          avatar_url: string
-        }[]
       }
       get_syncs_by_table_id: {
         Args: { table_id: string }

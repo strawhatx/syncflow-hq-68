@@ -93,7 +93,9 @@ class ApiKeyActionsStrategy implements ConnectionActionsStrategy {
             // If the connection is being created, create a new connection 
             // otherwise update the existing connection
             if (action === "create") {
-                await createConnection(connector, config);
+                // For user-based connections, we'll use the user ID as the team ID
+                // This maintains compatibility with the existing service
+                await createConnection(userId || "", connector, config);
             }
             else {
                 await updateConnection(connection_id, connector, config);
