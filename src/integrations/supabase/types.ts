@@ -165,64 +165,57 @@ export type Database = {
       }
       syncs: {
         Row: {
+          airtable_base_id: string | null
+          airtable_table_name: string | null
+          airtable_token: string | null
           config: Json
           created_at: string | null
-          destination_id: string | null
           id: string
           is_active: boolean | null
+          last_sync_at: string | null
           name: string
-          setup_stage: string
-          source_id: string | null
-          team_id: string | null
+          postgres_connection_string: string | null
+          postgres_table_name: string | null
+          sync_direction: string | null
+          sync_interval_minutes: number | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
+          airtable_base_id?: string | null
+          airtable_table_name?: string | null
+          airtable_token?: string | null
           config: Json
           created_at?: string | null
-          destination_id?: string | null
           id?: string
           is_active?: boolean | null
+          last_sync_at?: string | null
           name: string
-          setup_stage?: string
-          source_id?: string | null
-          team_id?: string | null
+          postgres_connection_string?: string | null
+          postgres_table_name?: string | null
+          sync_direction?: string | null
+          sync_interval_minutes?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
+          airtable_base_id?: string | null
+          airtable_table_name?: string | null
+          airtable_token?: string | null
           config?: Json
           created_at?: string | null
-          destination_id?: string | null
           id?: string
           is_active?: boolean | null
+          last_sync_at?: string | null
           name?: string
-          setup_stage?: string
-          source_id?: string | null
-          team_id?: string | null
+          postgres_connection_string?: string | null
+          postgres_table_name?: string | null
+          sync_direction?: string | null
+          sync_interval_minutes?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "syncs_destination_id_fkey"
-            columns: ["destination_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "syncs_source_id_fkey"
-            columns: ["source_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "syncs_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       team_members: {
         Row: {
