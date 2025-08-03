@@ -25,7 +25,9 @@ import ProtectedSyncViewRoute from "./routes/ProtectedSyncViewRoute";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  console.log('App component rendering...');
+  return (
   <QueryClientProvider client={queryClient}>
     <HeaderContentProvider>
       <AuthProvider>
@@ -73,7 +75,8 @@ const App = () => (
     </HeaderContentProvider>
     
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
 

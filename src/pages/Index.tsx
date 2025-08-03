@@ -8,7 +8,10 @@ const IndexPage = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  console.log('IndexPage rendering...');
+
   const { user } = useAuth();
+  console.log('User in IndexPage:', user);
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
