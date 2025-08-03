@@ -163,6 +163,88 @@ export type Database = {
         }
         Relationships: []
       }
+      sync_field_mappings: {
+        Row: {
+          airtable_field_name: string
+          created_at: string
+          id: string
+          postgres_field_name: string
+          sync_id: string
+        }
+        Insert: {
+          airtable_field_name: string
+          created_at?: string
+          id?: string
+          postgres_field_name: string
+          sync_id: string
+        }
+        Update: {
+          airtable_field_name?: string
+          created_at?: string
+          id?: string
+          postgres_field_name?: string
+          sync_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_field_mappings_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_logs: {
+        Row: {
+          created_at: string
+          direction: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          records_inserted: number | null
+          records_skipped: number | null
+          records_updated: number | null
+          status: string
+          sync_id: string
+          timestamp: string
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          records_inserted?: number | null
+          records_skipped?: number | null
+          records_updated?: number | null
+          status: string
+          sync_id: string
+          timestamp?: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          records_inserted?: number | null
+          records_skipped?: number | null
+          records_updated?: number | null
+          status?: string
+          sync_id?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_logs_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       syncs: {
         Row: {
           airtable_base_id: string | null

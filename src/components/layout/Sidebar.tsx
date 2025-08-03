@@ -37,9 +37,7 @@ interface NavItem {
 // Constants
 const NAV_ITEMS: NavItem[] = [
   { title: "Dashboard", icon: LayoutDashboard, url: "/dashboard" },
-  { title: "Syncs", icon: Activity, url: "/syncs" },
-  { title: "Connectors", icon: Database, url: "/connectors" },
-  { title: "Teams", icon: Users, url: "/teams" },
+  { title: "Legacy Syncs", icon: Activity, url: "/syncs" },
 ];
 
 // Components
@@ -68,8 +66,8 @@ const BrandLogo = () => (
             <Zap className="size-4 text-white" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">SyncStack</span>
-            <span className="truncate text-xs">PRO</span>
+            <span className="truncate font-semibold">AirTable Sync</span>
+            <span className="truncate text-xs">BETA</span>
           </div>
         </a>
       </SidebarMenuButton>

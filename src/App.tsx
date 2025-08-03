@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DashboardPage from "./pages/Dashboard";
+import SyncDashboardPage from "./pages/SyncDashboard";
 import Syncs from "./pages/Syncs";
 import Sync from "./pages/Sync";
 import SyncDetails from "./pages/SyncDetails";
@@ -44,7 +45,8 @@ const App = () => {
 
                 {/* Protected Routes with Main SidebarLayout */}
                 <Route element={<ProtectedRoute><SidebarLayout /></ProtectedRoute>}>
-                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/dashboard" element={<SyncDashboardPage />} />
+                  <Route path="/old-dashboard" element={<DashboardPage />} />
                   {/* Pages with data-dependent permissions - handled at page level */}
                   <Route path="/syncs" element={<Syncs />} />
 
