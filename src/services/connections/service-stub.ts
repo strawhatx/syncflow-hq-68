@@ -73,10 +73,10 @@ export const createConnection = async (team_id: string, connector: Connector, co
   const { error: insertError } = await supabase
     .from('connections')
     .insert({
-      integration_id: connector.id,
-      account_identifier: config.name,
-      account_config: omit(config, 'name'),
-      project_id: team_id,
+      connector_id: connector.id,
+      name: config.name,
+      config: omit(config, 'name'),
+      team_id: team_id,
       is_active: true
     });
 
@@ -98,7 +98,7 @@ export const updateConnection = async (id: string, connector: Connector, config:
 
   const { error } = await supabase
     .from('connections')
-    .update({ account_config: config, updated_at: new Date().toISOString() })
+    .update({ config: omit(config, 'name'), name: config.name, updated_at: new Date().toISOString() })
     .eq('id', id);
 
   if (error) throw error;

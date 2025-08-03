@@ -21,8 +21,14 @@ export class LoginStrategy implements AuthStrategy {
 
 export class RegisterStrategy implements AuthStrategy {
   async execute(credentials: {email: string, password: string }): Promise<void> {
-    // New invite-based login logic
-    const {error} = await supabase.auth.signUp(credentials)
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const {error} = await supabase.auth.signUp({
+      ...credentials,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
+    })
 
     if (error) throw error
   }
@@ -30,11 +36,13 @@ export class RegisterStrategy implements AuthStrategy {
 
 export class RegisterWithInviteStrategy implements AuthStrategy {
   async execute(credentials: {email: string, password: string, inviteCode: string}): Promise<void> {
-    // New invite-based login logic
+    const redirectUrl = `${window.location.origin}/`;
+    
     const {error} = await supabase.auth.signUp({
       email: credentials.email,
       password: credentials.password,
       options: {
+        emailRedirectTo: redirectUrl,
         data: {
           invite_code: credentials.inviteCode
         }

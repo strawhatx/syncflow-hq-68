@@ -34,10 +34,10 @@ export default function ConnectorConnectModal({ isOpen, onClose, connector, conn
       fetchConnectionById(connection_id).then(connection => {
 
         // parse the json config and set the name
-        var tempConfig = typeof connection.account_config === "string"
-          ? JSON.parse(connection.account_config)
-          : (connection.account_config as Record<string, any>)
-        setConfig({ ...tempConfig, name: connection.account_identifier });
+        var tempConfig = typeof connection.config === "string"
+          ? JSON.parse(connection.config as string)
+          : (connection.config as Record<string, any>)
+        setConfig({ ...tempConfig, name: connection.name });
       })
   }, [isOpen, connection_id]);
 
