@@ -90,7 +90,7 @@ VALUES
         'api_key',
         'postgresql',
         '{
-            "required_fields": ["host", "port", "database", "username", "password"],
+            "required_fields": ["host", "port", "database", "user", "password"],
             "optional_fields": ["schema", "ssl"],
             "description": "Connect to your PostgreSQL database",
             "icon": "postgresql-icon"

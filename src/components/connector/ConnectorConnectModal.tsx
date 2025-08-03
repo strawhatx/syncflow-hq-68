@@ -51,6 +51,7 @@ export default function ConnectorConnectModal({ isOpen, onClose, connector, conn
     try {
       // validate the config using Zod
       const schema = ConnectionFieldsStrategyFactory.getStrategy(connector).getSchema();
+      
       schema.parse(config);
       setValidationErrors({}); // Clear validation errors on success
 

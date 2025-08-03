@@ -40,7 +40,7 @@ export class PostgresFieldsStrategy implements ConnectionFieldsStrategy {
                     host: result.parsed.host,
                     port: result.parsed.port,
                     database: result.parsed.database,
-                    username: result.parsed.username,
+                    user: result.parsed.user,
                     password: result.parsed.password,
                     ssl: result.parsed.ssl
                 });

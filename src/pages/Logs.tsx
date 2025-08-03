@@ -14,7 +14,7 @@ import {
   Activity
 } from 'lucide-react';
 import { syncService } from '@/services/sync-simple/service';
-import { SyncDirection, SyncLog } from '@/types/sync-simple';
+import { SyncDirection, SyncLog } from '@/types/sync';
 import { formatDistanceToNow, format } from 'date-fns';
 
 export default function LogsPage() {

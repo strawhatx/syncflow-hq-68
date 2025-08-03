@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Sync, SyncLog, SyncFieldMapping, SyncDirection, LogStatus } from "@/types/sync-simple";
+import { Sync, SyncLog, SyncFieldMapping, SyncDirection, LogStatus } from "@/types/sync";
 
 export const syncService = {
   // Get all syncs for the current user

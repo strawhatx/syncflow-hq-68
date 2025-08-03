@@ -4,7 +4,9 @@ import type { Database } from './types';
 
 const SUPABASE_URL = "https://dogaulyokmazprycodos.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZ2F1bHlva21henByeWNvZG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQxOTI0NzgsImV4cCI6MjA2OTc2ODQ3OH0.4T1Ks4xzmqRfaN9dcmjPD8CHaggbq5EsQo91zF8W0Ik";
+const SUPABASE_API = "https://dogaulyokmazprycodos.supabase.co/functions/v1/";
 
+const RAILWAY_API = "https://primary-production-146e9.up.railway.app/webhook/";
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
@@ -20,3 +22,9 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     }
   }
 });
+
+// export the supabase api
+export const supabase_api = SUPABASE_API;
+
+// export the railway api
+export const railway_api = RAILWAY_API;

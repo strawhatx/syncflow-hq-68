@@ -9,7 +9,9 @@ import { Connector } from '@/types/connectors';
 import { useSync } from '@/contexts/SyncContext';
 import { fetchConnectors } from '@/services/connector/service';
 import { fetchConnectionDatabases, fetchTablesByDatabaseId } from '@/services/connections/service';
+import { TableOption } from '@/types/connectors';
 import { toast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Base {
   id: string;
@@ -17,16 +19,10 @@ interface Base {
   connection_id: string;
 }
 
-interface TableOption {
-  id: string;
-  name: string;
-  database_id: string;
-}
-
 export default function AirtableStep({ next }: { next: () => void }) {
-  const { syncConfig, setAirtableConnection, setAirtableBase, setAirtableTable, saveAndAdvance } = useSync();
+  const { connectors, setAirtableConnection, setAirtableBase, setAirtableTable, saveAndAdvance } = useSync();
+  const queryClient = useQueryClient();
   const [connector, setConnector] = useState<Connector | null>(null);
-  const [connections, setConnections] = useState<any[]>([]);
   const [bases, setBases] = useState<Base[]>([]);
   const [tables, setTables] = useState<TableOption[]>([]);
   const [selectedConnection, setSelectedConnection] = useState<string>('');
@@ -34,15 +30,15 @@ export default function AirtableStep({ next }: { next: () => void }) {
   const [selectedTable, setSelectedTable] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const connections = connectors?.find(c => c.provider === 'airtable')?.connections || [];
+
   // Load Airtable connector and existing connections
   useEffect(() => {
     const loadConnectorAndConnections = async () => {
       try {
-        const connectors = await fetchConnectors();
-        const airtableConnector = connectors.find(c => c.provider === 'airtable');
+        const airtableConnector = connectors?.find(c => c.provider === 'airtable');
         if (airtableConnector) {
           setConnector(airtableConnector);
-          setConnections(airtableConnector.connections || []);
         }
       } catch (error) {
         toast({
@@ -54,7 +50,7 @@ export default function AirtableStep({ next }: { next: () => void }) {
     };
 
     loadConnectorAndConnections();
-  }, []);
+  }, [connectors]);
 
   // Load bases when connection is selected
   useEffect(() => {
@@ -103,7 +99,9 @@ export default function AirtableStep({ next }: { next: () => void }) {
   };
 
   const handleConnectionCreated = (newConnection: any) => {
-    setConnections(prev => [...prev, newConnection]);
+    // Invalidate and refetch the connectors query to get updated connections
+    queryClient.invalidateQueries({ queryKey: ['connectors'] });
+    
     setSelectedConnection(newConnection.id);
     setAirtableConnection(newConnection.id);
   };

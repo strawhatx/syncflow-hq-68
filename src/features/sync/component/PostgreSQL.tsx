@@ -7,9 +7,13 @@ import { Database, Table, Plus, Check } from 'lucide-react';
 import ConnectorConnectModal from '@/components/connector/ConnectorConnectModal';
 import { Connector } from '@/types/connectors';
 import { useSync } from '@/contexts/SyncContext';
-import { fetchConnectors } from '@/services/connector/service';
 import { fetchConnectionDatabases, fetchTablesByDatabaseId } from '@/services/connections/service';
+import { TableOption } from '@/types/connectors';
 import { toast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { CustomSelectButton } from '@/components/ui_custom/CustomSelectButton';
+import { useConnectionSelection } from '../hooks/useConnectionSelection';
+import { useDatabaseSelection } from '../hooks/useDatasourceSelection';
 
 interface Database {
   id: string;
@@ -17,94 +21,44 @@ interface Database {
   connection_id: string;
 }
 
-interface TableOption {
-  id: string;
-  name: string;
-  database_id: string;
-}
-
 export default function PostgreSQLStep({ next }: { next: () => void }) {
   const { syncConfig, connectors, setPostgreSQLConnection, setPostgreSQLDatabase, setPostgreSQLTable, saveAndAdvance } = useSync();
+  const queryClient = useQueryClient();
   const [connector, setConnector] = useState<Connector | null>(null);
-  const [connections, setConnections] = useState<any[]>([]);
-  const [databases, setDatabases] = useState<Database[]>([]);
-  const [tables, setTables] = useState<TableOption[]>([]);
-  const [selectedConnection, setSelectedConnection] = useState<string>('');
-  const [selectedDatabase, setSelectedDatabase] = useState<string>('');
-  const [selectedTable, setSelectedTable] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load PostgreSQL connector and existing connections
-  useEffect(() => {
-    const loadConnectorAndConnections = async () => {
-      try {
-        const postgresConnector = connectors?.find(c => c.provider === 'postgresql');
-        if (postgresConnector) {
-          setConnector(postgresConnector);
-          setConnections(postgresConnector.connections || []);
-        }
-      } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'Failed to load PostgreSQL connector',
-          variant: 'destructive',
-        });
-      }
-    };
+  const { connection, setConnection, connections } = useConnectionSelection({
+    connectors,
+    provider: 'postgresql',
+    connection: syncConfig?.config?.schema?.source_database_id,
+    setConnection: (id: string) => setPostgreSQLConnection(id)
+  });
 
-    loadConnectorAndConnections();
-  }, []);
+  const { database, setDatabase, options: databases } = useDatabaseSelection({
+    connection: syncConfig?.config?.postgresql?.connection_id,
+    connectors,
+    database: syncConfig?.config?.postgresql?.database_id,
+    setDatabase: (id: string) => setPostgreSQLDatabase(id),
+    side: "source"
+  });
 
-  // Load databases when connection is selected
-  useEffect(() => {
-    if (selectedConnection) {
-      loadDatabases(selectedConnection);
-    }
-  }, [selectedConnection]);
-
-  // Load tables when database is selected
-  useEffect(() => {
-    if (selectedDatabase) {
-      loadTables(selectedDatabase);
-    }
-  }, [selectedDatabase]);
-
-  const loadDatabases = async (connectionId: string) => {
-    try {
-      setIsLoading(true);
-      const databases = await fetchConnectionDatabases(connectionId);
-      setDatabases(databases);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load databases',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadTables = async (databaseId: string) => {
-    try {
-      setIsLoading(true);
-      const tables = await fetchTablesByDatabaseId(databaseId, 'postgresql');
-      setTables(tables);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load tables',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { table, setTable, options: tables } = useTableSelection({
+    connection: syncConfig?.config?.postgresql?.connection_id,
+    database: syncConfig?.config?.postgresql?.database_id,
+    table: syncConfig?.config?.postgresql?.table_id,
+    setTable: (id: string) => setPostgreSQLTable(id),
+  });
 
   const handleConnectionCreated = (newConnection: any) => {
-    setConnections(prev => [...prev, newConnection]);
-    setSelectedConnection(newConnection.id);
-    setPostgreSQLConnection(newConnection.id);
+    // Invalidate and refetch the connectors query to get updated connections
+    queryClient.invalidateQueries({ queryKey: ['connectors'] });
+
+    setConnection(newConnection.id);
+  };
+
+  const onCreateNew = () => {
+    const postgresConnector = connectors?.find(c => c.provider === 'postgresql');
+    setConnector(postgresConnector);
   };
 
   const handleNext = async () => {
@@ -121,7 +75,7 @@ export default function PostgreSQLStep({ next }: { next: () => void }) {
       setPostgreSQLConnection(selectedConnection);
       setPostgreSQLDatabase(selectedDatabase);
       setPostgreSQLTable(selectedTable);
-      
+
       await saveAndAdvance();
       next();
     } catch (error) {
@@ -133,8 +87,6 @@ export default function PostgreSQLStep({ next }: { next: () => void }) {
     }
   };
 
-  const selectedConnectionData = connections.find(c => c.id === selectedConnection);
-  const selectedDatabaseData = databases.find(d => d.id === selectedDatabase);
   const selectedTableData = tables.find(t => t.id === selectedTable);
 
   return (
@@ -142,79 +94,33 @@ export default function PostgreSQLStep({ next }: { next: () => void }) {
       {/* Connection Selection */}
       <div>
         <div className="space-y-4">
-          {connections.length > 0 ? (
-            <div className="space-y-2">
-              <Select value={selectedConnection} onValueChange={setSelectedConnection}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a connection" />
-                </SelectTrigger>
-                <SelectContent>
-                  {connections.map((connection) => (
-                    <SelectItem key={connection.id} value={connection.id}>
-                      {connection.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              {selectedConnectionData && (
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{selectedConnectionData.name}</Badge>
-                  <Check className="w-4 h-4 text-green-500" />
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-4 text-gray-500">
-              No PostgreSQL connections found
-            </div>
-          )}
-
-          <Button
-            onClick={() => setConnector(connector)}
-            className="w-full"
-            variant="outline"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create New Connection
-          </Button>
+          <CustomSelectButton
+            value={connection || ""}
+            onValueChange={(value: any) => setConnection(value)}
+            options={connections?.map((conn: { id: any; account_identifier: any; }) => ({
+              id: conn.id,
+              name: conn.account_identifier,
+            })) || []}
+            placeholder={`Select connection`}
+            isLoading={false}
+            onCreateNew={onCreateNew}
+          />
         </div>
       </div>
 
       {/* Database Selection */}
-      {selectedConnection && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Database className="w-5 h-5" />
-              Database
-            </CardTitle>
-            <CardDescription>
-              Select the database you want to sync
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedDatabase} onValueChange={setSelectedDatabase}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a database" />
-              </SelectTrigger>
-              <SelectContent>
-                {databases.map((database) => (
-                  <SelectItem key={database.id} value={database.id}>
-                    {database.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {selectedDatabaseData && (
-              <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary">{selectedDatabaseData.name}</Badge>
-                <Check className="w-4 h-4 text-green-500" />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {connection && (
+        <CustomSelectButton
+          value={database || ""}
+          onValueChange={(value: any) => setDatabase(value)}
+          options={databases?.map((db: { id: any; name: any; }) => ({
+            id: db.id,
+            name: db.name,
+          })) || []}
+          placeholder={`Select database`}
+          isLoading={false}
+          onCreateNew={onCreateNew}
+        />
       )}
 
       {/* Table Selection */}
@@ -242,7 +148,7 @@ export default function PostgreSQLStep({ next }: { next: () => void }) {
                 ))}
               </SelectContent>
             </Select>
-            
+
             {selectedTableData && (
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant="secondary">{selectedTableData.name}</Badge>

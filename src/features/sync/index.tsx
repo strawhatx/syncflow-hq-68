@@ -1,6 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import AccountsStep from "./component/Accounts";
-import DataSourcesStep from "./component/DataSources";
 import PostgreSQLStep from "./component/PostgreSQL";
 import AirtableStep from "./component/Airtable";
 import FilterStep from "./component/Filter";
@@ -11,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { sanitizeField } from "@/lib/sanitize";
 import { useSync } from "@/contexts/SyncContext";
-import { SyncStage } from "@/types/sync";
 
 // Step state enum for cleaner logic
 enum StepState {
@@ -41,13 +38,6 @@ const steps = [
         label: "configure Airtable connection",
         description: "Set up your Airtable connection and select base/table",
         component: AirtableStep,
-    },
-    {
-        id: 3,
-        stage: "data-sources",
-        label: "choose your data sources",
-        description: "Select the data sources you want to sync",
-        component: DataSourcesStep,
     },
     {
         id: 4,

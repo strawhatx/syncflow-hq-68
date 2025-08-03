@@ -11,10 +11,21 @@ export interface ParsedConnectionString {
   [key: string]: any;
 }
 
+export interface ParsedConnectionStringPostgres {
+
+  host: string;
+  port: number;
+  database: string;
+  user: string;
+  password: string;
+  ssl?: boolean;
+  [key: string]: any;
+}
+
 export interface ConnectionStringValidationResult {
   isValid: boolean;
   error?: string;
-  parsed?: ParsedConnectionString;
+  parsed?: ParsedConnectionString|ParsedConnectionStringPostgres;
 }
 
 // PostgreSQL connection string parser
@@ -34,11 +45,11 @@ export function parsePostgreSQLConnectionString(connectionString: string): Conne
     const [, username, password, host, port, database] = match;
     const urlParams = new URLSearchParams(match[6] || "");
     
-    const parsed: ParsedConnectionString = {
+    const parsed: ParsedConnectionString|ParsedConnectionStringPostgres = {
       host,
       port: parseInt(port),
       database,
-      username: decodeURIComponent(username),
+      user: decodeURIComponent(username),
       password: decodeURIComponent(password),
       ssl: urlParams.get("sslmode") === "require"
     };
@@ -48,7 +59,7 @@ export function parsePostgreSQLConnectionString(connectionString: string): Conne
       host: z.string().min(1, "Host is required"),
       port: z.number().min(1, "Port must be greater than 0"),
       database: z.string().min(1, "Database is required"),
-      username: z.string().min(1, "Username is required"),
+      user: z.string().min(1, "Username is required"),
       password: z.string().min(1, "Password is required"),
       ssl: z.boolean().optional()
     });

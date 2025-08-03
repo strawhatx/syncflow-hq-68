@@ -1,145 +1,57 @@
-import { User } from "@supabase/supabase-js";
-import Sync from "@/features/sync";
+// Simplified types for the focused Airtable <-> Postgres sync tool
 
-export type SyncDirection = "source-to-destination" | "destination-to-source" | "two-way";
-export type Schedule = "every 1 hour" | "every 1 day" | "every 1 week" | "every 1 month" | "every 1 year" | "every 1 minute" | "every 1 second";
-export type Backoff = "exponential" | "linear" | "constant";
-export type SyncStatus = "draft" | "active" | "paused" | "error" | "synced";
-export type SyncStage = "accounts" | "data-sources" | "postgresql" | "airtable" | "mappings" | "filters" | "ready";
-export type ConflictResolution = 'source' | 'destination' | 'latest';
+export type SyncDirection = 'airtable-to-postgres' | 'postgres-to-airtable' | 'two-way';
 
+export type SyncStatus = 'draft' | 'active' | 'paused' | 'error';
+
+export type LogStatus = 'success' | 'error' | 'partial';
 
 export interface SyncFieldMapping {
-    source_field_id: string;
-    destination_field_id: string;
-    transformation?: string; // e.g., "combine", "toISOString", "uppercase"
-    params?: Record<string, any>; // e.g., { separator: " " }
+  id: string;
+  sync_id: string;
+  airtable_field_name: string;
+  postgres_field_name: string;
+  created_at: string;
 }
 
-export interface SyncFilter {
-    field_id: string;
-    operator: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "nin" | "like" | "nlike" | "ilike" | "nilike" | "is" | "is_not" | "is_null" | "is_not_null";
-    value: string | number | boolean | string[] | number[] | boolean[];
+export interface SyncLog {
+  id: string;
+  sync_id: string;
+  timestamp: string;
+  direction: Exclude<SyncDirection, 'two-way'>;
+  status: LogStatus;
+  records_inserted: number;
+  records_updated: number;
+  records_skipped: number;
+  duration_ms: number | null;
+  error_message: string | null;
+  created_at: string;
 }
-
-export interface SyncTableMapping {
-    id: string;
-    source_table_id: string;
-    destination_table_id: string;
-    field_mappings: SyncFieldMapping[];
-    direction: SyncDirection;         // NEW: direction per mapping
-    filters: {
-        source: SyncFilter[];
-        destination: SyncFilter[];
-    }
-}
-
-export interface SyncSchema {
-    source_database_id: string;
-    destination_database_id: string;
-    table_mappings: SyncTableMapping[];
-}
-
 export interface PostgreSQLConfig {
-    connection_id: string;
-    database_id: string;
-    table_id: string;
+  connection_id: string;
+  database_id: string;
+  table_id: string;
 }
 
 export interface AirtableConfig {
-    connection_id: string;
-    base_id: string;
-    table_id: string;
-}
-
-export interface SyncBatchSize {
-    size: number;
-    interval: number;
-}
-
-export interface SyncRetryPolicy {
-    max_retries: number;
-    backoff: Backoff;
-}
-
-export interface SyncNotifications {
-    notify: string[];
-    on_success: boolean;
-    on_failure: boolean;
-    on_partial_failure: boolean;
-    on_retry: boolean;
-    on_timeout: boolean;
-}
-
-export interface SyncConfig {
-    stage?: SyncStage;
-    conflict_resolution: ConflictResolution;
-    schema: SyncSchema;
-    postgresql?: PostgreSQLConfig;
-    airtable?: AirtableConfig;
-    schedule: Schedule;
-    batch_size: SyncBatchSize;
-    retry_policy: SyncRetryPolicy;
-    notifications: SyncNotifications;
+  connection_id: string;
+  base_id: string;
+  table_id: string;
 }
 
 export interface Sync {
-    id: string
-    name: string
-    source_id: string
-    destination_id: string
-    created_by: string
-    config: SyncConfig
-    status: SyncStatus
-}
-
-const defaultData = (user: User): Omit<Sync, "id" | "created_by"> => {
-    return {
-        name: "Untitled Sync",
-        source_id: null,
-        destination_id: null,
-
-        config: {
-            stage: "accounts" as SyncStage,
-            conflict_resolution: "latest" as ConflictResolution,
-            schema: {
-                source_database_id: null,
-                destination_database_id: null,
-                table_mappings: [],
-            },
-            schedule: "every 1 minute" as Schedule,
-            batch_size: {
-                size: 100,
-                interval: 1000,
-            },
-            retry_policy: {
-                max_retries: 3,
-                backoff: "exponential"
-            },
-            notifications: {
-                notify: [user?.email || ""],
-                on_success: true,
-                on_failure: true,
-                on_partial_failure: true,
-                on_retry: false,
-                on_timeout: true,
-            },
-            
-        } as SyncConfig,
-        status: "draft" as SyncStatus,
-    }
-}
-
-export const defaultCreateSync = (user: User): Omit<Sync, "id"> => {
-    return {
-        ...defaultData(user),
-        created_by: user.id
-    }
-}
-
-export const defaultUpdateSync = (sync_id: string, user: User): Omit<Sync, "created_by"> => {
-    return {
-        ...defaultData(user),
-        id: sync_id
-    }
+  id: string;
+  name: string;
+  config: {
+    postgresql?: PostgreSQLConfig;
+    airtable?: AirtableConfig;
+    auto_sync_enabled: boolean;
+    sync_interval_minutes: number;
+    sync_direction: SyncDirection;
+  last_sync_at: string | null;
+  } | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
 }
