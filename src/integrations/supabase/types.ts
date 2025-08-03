@@ -70,7 +70,6 @@ export type Database = {
           is_active: boolean | null
           name: string
           provider: string
-          team_id: string | null
           type: string
           updated_at: string | null
         }
@@ -81,7 +80,6 @@ export type Database = {
           is_active?: boolean | null
           name: string
           provider: string
-          team_id?: string | null
           type: string
           updated_at?: string | null
         }
@@ -92,19 +90,10 @@ export type Database = {
           is_active?: boolean | null
           name?: string
           provider?: string
-          team_id?: string | null
           type?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "connectors_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       field_mapping: {
         Row: {
