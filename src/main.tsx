@@ -6,4 +6,13 @@ import './index.css'
 // Initialize security measures
 //initializeSecurity();
 
-createRoot(document.getElementById("root")!).render(<App />);
+console.log('Starting app...');
+const root = document.getElementById("root");
+console.log('Root element:', root);
+
+if (root) {
+  createRoot(root).render(<App />);
+  console.log('App rendered successfully');
+} else {
+  console.error('Root element not found!');
+}
