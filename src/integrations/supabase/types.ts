@@ -307,29 +307,7 @@ export type Database = {
       }
     }
     Views: {
-      view_team_members: {
-        Row: {
-          avatar_url: string | null
-          created_at: string | null
-          email: string | null
-          id: string | null
-          role: string | null
-          status: string | null
-          team_id: string | null
-          updated_at: string | null
-          user_id: string | null
-          username: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "team_members_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       get_accessible_sync_ids_for_user: {
@@ -343,6 +321,14 @@ export type Database = {
       get_team_ids_for_user: {
         Args: { uid: string }
         Returns: string[]
+      }
+      get_team_member_profile: {
+        Args: { member_user_id: string }
+        Returns: {
+          email: string
+          username: string
+          avatar_url: string
+        }[]
       }
     }
     Enums: {
