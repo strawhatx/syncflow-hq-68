@@ -14,6 +14,139 @@ export type Database = {
   }
   public: {
     Tables: {
+      connections: {
+        Row: {
+          config: Json
+          connector_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          team_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          config: Json
+          connector_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json
+          connector_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connections_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connectors: {
+        Row: {
+          config: Json
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          provider: string
+          team_id: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          config: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          provider: string
+          team_id?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          provider?: string
+          team_id?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connectors_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      field_mapping: {
+        Row: {
+          created_at: string | null
+          destination_field: string
+          id: string
+          source_field: string
+          sync_id: string | null
+          transformation_config: Json | null
+          transformation_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          destination_field: string
+          id?: string
+          source_field: string
+          sync_id?: string | null
+          transformation_config?: Json | null
+          transformation_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          destination_field?: string
+          id?: string
+          source_field?: string
+          sync_id?: string | null
+          transformation_config?: Json | null
+          transformation_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_mapping_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -41,12 +174,176 @@ export type Database = {
         }
         Relationships: []
       }
+      syncs: {
+        Row: {
+          config: Json
+          created_at: string | null
+          destination_id: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          setup_stage: string
+          source_id: string | null
+          team_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          config: Json
+          created_at?: string | null
+          destination_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          setup_stage?: string
+          source_id?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json
+          created_at?: string | null
+          destination_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          setup_stage?: string
+          source_id?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "syncs_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "syncs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "syncs_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: string
+          status: string
+          team_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: string
+          status?: string
+          team_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: string
+          status?: string
+          team_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      view_team_members: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          id: string | null
+          role: string | null
+          status: string | null
+          team_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_accessible_sync_ids_for_user: {
+        Args: { uid: string }
+        Returns: string[]
+      }
+      get_role_based_team_ids_for_user: {
+        Args: { uid: string; role_param: string }
+        Returns: string[]
+      }
+      get_team_ids_for_user: {
+        Args: { uid: string }
+        Returns: string[]
+      }
     }
     Enums: {
       [_ in never]: never
