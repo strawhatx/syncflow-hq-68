@@ -6,351 +6,341 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.4"
+  }
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          id: string
-          full_name: string | null
-          avatar_url: string | null
-          email: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id: string
-          full_name?: string | null
-          avatar_url?: string | null
-          email?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          full_name?: string | null
-          avatar_url?: string | null
-          email?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      teams: {
-        Row: {
-          id: string
-          name: string
-          created_by: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          created_by: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          created_by?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      team_members: {
-        Row: {
-          id: string
-          team_id: string
-          user_id: string
-          role: string
-          status: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          team_id: string
-          user_id: string
-          role: string
-          status?: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          team_id?: string
-          user_id?: string
-          role?: string
-          status?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      team_invites: {
-        Row: {
-          id: string
-          team_id: string
-          email: string
-          verification_code: string
-          status: 'pending' | 'accepted' | 'expired'
-          expires_at: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          team_id: string
-          email: string
-          verification_code: string
-          status?: 'pending' | 'accepted' | 'expired'
-          expires_at: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          team_id?: string
-          email?: string
-          verification_code?: string
-          status?: 'pending' | 'accepted' | 'expired'
-          expires_at?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      connectors: {
-        Row: {
-          id: string
-          name: string
-          type: 'api_key' | 'oauth'
-          provider: string
-          config: Json
-          is_active: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          type: 'api_key' | 'oauth'
-          provider: string
-          config: Json
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          type?: 'api_key' | 'oauth'
-          provider?: string
-          config?: Json
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-      }
       connections: {
         Row: {
+          account_config: Json
+          account_identifier: string | null
+          created_at: string
           id: string
-          connector_id: string
-          name: string
-          config: Json
-          team_id: string
+          integration_id: string
           is_active: boolean
-          created_at: string
+          project_id: string
           updated_at: string
         }
         Insert: {
+          account_config?: Json
+          account_identifier?: string | null
+          created_at?: string
           id?: string
-          connector_id: string
-          name: string
-          config: Json
-          team_id: string
+          integration_id: string
           is_active?: boolean
-          created_at?: string
+          project_id: string
           updated_at?: string
         }
         Update: {
+          account_config?: Json
+          account_identifier?: string | null
+          created_at?: string
           id?: string
-          connector_id?: string
-          name?: string
-          config?: Json
-          team_id?: string
+          integration_id?: string
           is_active?: boolean
-          created_at?: string
+          project_id?: string
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "connections_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "integrations_flat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      syncs: {
+      content_posts: {
         Row: {
-          id: string
-          name: string
-          source_id: string
-          destination_id: string
-          config: Json
-          team_id: string
-          status: 'draft' | 'active' | 'paused' | 'error'
-          created_by: string
+          content: string
           created_at: string
+          engagement: Json | null
+          id: string
+          metadata: Json | null
+          platform: string
+          posted_at: string | null
+          project_id: string
+          scheduled_at: string | null
+          status: string
           updated_at: string
         }
         Insert: {
-          id?: string
-          name: string
-          source_id: string
-          destination_id: string
-          config: Json
-          team_id: string
-          status?: 'draft' | 'active' | 'paused' | 'error'
-          created_by: string
+          content: string
           created_at?: string
+          engagement?: Json | null
+          id?: string
+          metadata?: Json | null
+          platform: string
+          posted_at?: string | null
+          project_id: string
+          scheduled_at?: string | null
+          status?: string
           updated_at?: string
         }
         Update: {
+          content?: string
+          created_at?: string
+          engagement?: Json | null
           id?: string
+          metadata?: Json | null
+          platform?: string
+          posted_at?: string | null
+          project_id?: string
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      integrations: {
+        Row: {
+          config_data: Json
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          provider: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          config_data?: Json
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          provider: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          config_data?: Json
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
           name?: string
-          source_id?: string
-          destination_id?: string
-          config?: Json
-          team_id?: string
-          status?: 'draft' | 'active' | 'paused' | 'error'
-          created_by?: string
-          created_at?: string
+          provider?: string
+          type?: string
           updated_at?: string
         }
+        Relationships: []
       }
-      field_mapping: {
+      oauth_states: {
         Row: {
-          id: string
-          sync_id: string
-          source_field: string
-          destination_field: string
-          transformation_type: string | null
-          transformation_config: Json | null
           created_at: string
+          expires_at: string
+          id: string
+          pkce_verifier: string | null
+          state_data: Json
+          state_hash: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          pkce_verifier?: string | null
+          state_data?: Json
+          state_hash: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          pkce_verifier?: string | null
+          state_data?: Json
+          state_hash?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
           updated_at: string
         }
         Insert: {
-          id?: string
-          sync_id: string
-          source_field: string
-          destination_field: string
-          transformation_type?: string | null
-          transformation_config?: Json | null
+          avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
           updated_at?: string
         }
         Update: {
-          id?: string
-          sync_id?: string
-          source_field?: string
-          destination_field?: string
-          transformation_type?: string | null
-          transformation_config?: Json | null
+          avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
           updated_at?: string
         }
+        Relationships: []
       }
-      connector_oauth_configs_public: {
+      projects: {
         Row: {
-          id: string;
-          name: string;
-          type: 'api_key' | 'oauth';
-          provider: string;
-          client_id: string | null;
-          auth_url: string | null;
-          token_url: string | null;
-          redirect_url: string | null;
-          scopes: string[] | null;
-          required_parameters: string[] | null;
-          description: string | null;
-          created_at: string;
-          updated_at: string;
-        }
-      }
-      connection_databases: {
-        Row: {
-          id: string
-          connection_id: string
-          team_id: string
-          config: Json
+          automation_enabled: boolean
+          automation_frequency: string | null
+          brand_voice: string | null
+          content_sources: number | null
           created_at: string
-          updated_at: string
-        }
-      }
-      connection_tables: {
-        Row: {
+          description: string | null
           id: string
-          database_id: string
-          team_id: string
-          config: Json
-          created_at: string
-          updated_at: string
-        }
-      }
-      connection_columns: {
-        Row: {
-          id: string
-          table_id: string
-          team_id: string
+          last_generated: string | null
           name: string
-          data_type: string
-          is_nullable: boolean
-          created_at: string
+          platforms: string[] | null
+          role_analytics_tracker: boolean | null
+          role_audience_researcher: boolean | null
+          role_brand_builder: boolean | null
+          role_campaign_planner: boolean | null
+          role_channel_manager: boolean | null
+          role_community_engager: boolean | null
+          role_content_creator: boolean | null
+          role_growth_hacker: boolean | null
+          role_lead_generator: boolean | null
+          target_audience: string | null
           updated_at: string
-        }
-      }
-      metadata_sync_jobs: {
-        Row: {
-          id?: string
-          connection_id: string
-          status?: 'pending' | 'running' | 'completed' | 'failed'
-          started_at?: string | null
-          error?: string | null
-          created_at?: string
-          updated_at?: string
+          user_id: string
         }
         Insert: {
-          id?: string
-          connection_id: string
-          status?: 'pending' | 'running' | 'completed' | 'failed'
-          started_at?: string | null
-          error?: string | null
+          automation_enabled?: boolean
+          automation_frequency?: string | null
+          brand_voice?: string | null
+          content_sources?: number | null
           created_at?: string
-          updated_at?: string
-        }
-      }
-      data_sync_jobs: {
-        Row: {
-          id: string
-          sync_id: string
-          status: 'pending' | 'running' | 'completed' | 'failed'
-          records_processed: number
-          records_synced: number
-          started_at: string | null
-          completed_at: string | null
-          error_message: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
+          description?: string | null
           id?: string
-          sync_id: string
-          status?: 'pending' | 'running' | 'completed' | 'failed'
-          records_processed?: number
-          records_synced?: number
-          started_at?: string | null
-          completed_at?: string | null
-          error_message?: string | null
-          created_at?: string
+          last_generated?: string | null
+          name: string
+          platforms?: string[] | null
+          role_analytics_tracker?: boolean | null
+          role_audience_researcher?: boolean | null
+          role_brand_builder?: boolean | null
+          role_campaign_planner?: boolean | null
+          role_channel_manager?: boolean | null
+          role_community_engager?: boolean | null
+          role_content_creator?: boolean | null
+          role_growth_hacker?: boolean | null
+          role_lead_generator?: boolean | null
+          target_audience?: string | null
           updated_at?: string
+          user_id: string
         }
+        Update: {
+          automation_enabled?: boolean
+          automation_frequency?: string | null
+          brand_voice?: string | null
+          content_sources?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_generated?: string | null
+          name?: string
+          platforms?: string[] | null
+          role_analytics_tracker?: boolean | null
+          role_audience_researcher?: boolean | null
+          role_brand_builder?: boolean | null
+          role_campaign_planner?: boolean | null
+          role_channel_manager?: boolean | null
+          role_community_engager?: boolean | null
+          role_content_creator?: boolean | null
+          role_growth_hacker?: boolean | null
+          role_lead_generator?: boolean | null
+          target_audience?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      integrations_flat: {
+        Row: {
+          auth_url: string | null
+          client_id: string | null
+          client_secret: string | null
+          code_challenge_required: boolean | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string | null
+          is_active: boolean | null
+          name: string | null
+          provider: string | null
+          redirect_url: string | null
+          required_parameters: string[] | null
+          scopes: string[] | null
+          token_url: string | null
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_url?: never
+          client_id?: never
+          client_secret?: never
+          code_challenge_required?: never
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          provider?: string | null
+          redirect_url?: never
+          required_parameters?: never
+          scopes?: never
+          token_url?: never
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_url?: never
+          client_id?: never
+          client_secret?: never
+          code_challenge_required?: never
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          provider?: string | null
+          redirect_url?: never
+          required_parameters?: never
+          scopes?: never
+          token_url?: never
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
@@ -364,21 +354,25 @@ export interface Database {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -396,14 +390,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -419,14 +415,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -442,14 +440,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -457,14 +457,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
