@@ -35,16 +35,22 @@ describe("connectionService", () => {
     const team_id = "123";
     const connector: Connector = {
       id: "123",
+      icon: "mongodb",
       name: "test",
+      description: "Test MongoDB connector",
       type: "api_key",
       provider: "mongodb",
+      client_id: "",
+      auth_url: "",
+      token_url: "",
+      redirect_url: "",
+      scopes: [],
+      required_fields: ["test"],
+      required_parameters: [],
+      code_challenge_required: false,
       is_active: true,
-      config: {
-        required_fields: ["test"],
-        optional_fields: [],
-        description: "",
-        icon: ""
-      }
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
     const connectionName = "test";
     const config = { test: "test", url: "mongodb://test:test@test.com:27017/test" };
