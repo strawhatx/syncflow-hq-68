@@ -14,7 +14,7 @@ export const useAuth = () => {
     setIsSubmitting(true);
     try {
       await signIn(data.email, data.password);
-      navigate("/dashboard");
+      navigate("/syncs");
     } catch (error) {
       console.error("Login error:", error);
       toast({

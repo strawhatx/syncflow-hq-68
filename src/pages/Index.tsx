@@ -35,7 +35,7 @@ const IndexPage = () => {
             <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
               {user ? (
                 <Button className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors' asChild>
-                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to="/syncs">Dashboard</Link>
                 </Button>
               ) : (
                 <>

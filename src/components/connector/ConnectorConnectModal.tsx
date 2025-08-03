@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTeam } from "@/contexts/TeamContext";
 import { ConnectionFieldsStrategyFactory } from "@/patterns/strategies/connection-feilds";
 import { Zap } from "lucide-react";
 import { ConnectionActionsStrategyFactory } from "@/patterns/strategies/connection-actions";
@@ -21,7 +20,6 @@ interface ConnectorConnectModalProps {
 }
 
 export default function ConnectorConnectModal({ isOpen, onClose, connector, connection_id }: ConnectorConnectModalProps) {
-  const { team } = useTeam();
   const { user } = useAuth();
   const [config, setConfig] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +60,6 @@ export default function ConnectorConnectModal({ isOpen, onClose, connector, conn
         setIsLoading,
         setError,
         config,
-        team.id,
         
         // If the connection is being created, create a new connection to do that 
         // we need to set the connection_id to undefined

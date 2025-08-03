@@ -84,7 +84,7 @@ const SyncDetails = () => {
       <div>
         <div className="mb-6">
           <div className="breadcrumb">
-            <Link to="/dashboard" className="hover:text-foreground">Dashboard</Link>
+            <Link to="/syncs" className="hover:text-foreground">Dashboard</Link>
             <span className="breadcrumb-separator">/</span>
             <Link to="/syncs" className="hover:text-foreground">Syncs</Link>
             <span className="breadcrumb-separator">/</span>

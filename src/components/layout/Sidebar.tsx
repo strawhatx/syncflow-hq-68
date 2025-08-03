@@ -12,14 +12,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  Activity,
-  Box,
   ChevronsUpDown,
   Clock,
-  Database,
   LayoutDashboard,
   LogOut,
-  Users,
   Zap
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,7 +32,7 @@ interface NavItem {
 
 // Constants
 const NAV_ITEMS: NavItem[] = [
-  { title: "Dashboard", icon: LayoutDashboard, url: "/dashboard" },
+  { title: "Syncs", icon: LayoutDashboard, url: "/syncs" },
   { title: "Logs", icon: Clock, url: "/logs" },
 ];
 
@@ -61,7 +57,7 @@ const BrandLogo = () => (
   <SidebarMenu>
     <SidebarMenuItem>
       <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-        <a href="/dashboard">
+        <a href="/syncs">
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200">
             <Zap className="size-4 text-white" />
           </div>

@@ -64,7 +64,7 @@ const Auth = () => {
 
   // If user is already logged in, redirect to dashboard
   if (user && !isLoading) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/syncs" replace />;
   }
 
   return (

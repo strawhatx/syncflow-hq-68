@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { Sync, SyncTableMapping, SyncStage, defaultCreateSync } from "@/types/sync";
 import { useAuth } from "./AuthContext";
-import { useTeam } from "./TeamContext";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ConnectorWithConnections, fetchConnectors } from "@/services/connector/service";
@@ -34,7 +33,6 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { id } = useParams();
     const { user } = useAuth();
-    const { team } = useTeam();
     const [syncConfig, setSyncConfig] = useState<Sync>()
     const [selectedTableMappingId, setSelectedTableMappingId] = useState<string | null>(null);
 
@@ -91,7 +89,7 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // reset the sync config
     const reset = () => {
-        const newSync = defaultCreateSync(user, team);
+        const newSync = defaultCreateSync(user);
         setSyncConfig(prev => ({
             ...prev,
             source_id: newSync.source_id,
