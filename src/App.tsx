@@ -16,7 +16,7 @@ import Profile from "./pages/Profile";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SidebarLayout } from "./layouts/Index";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import { HeaderContentProvider } from '@/contexts/HeaderContentContext';
 import TeamsPage from "./pages/Teams";
 import { TeamProvider } from "./contexts/TeamContext";
@@ -71,7 +71,7 @@ const App = () => (
         </TeamProvider>
       </AuthProvider>
     </HeaderContentProvider>
-    <ReactQueryDevtools initialIsOpen={false} />
+    
   </QueryClientProvider>
 );
 
