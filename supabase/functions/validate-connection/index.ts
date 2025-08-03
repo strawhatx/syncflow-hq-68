@@ -65,6 +65,6 @@ Deno.serve(async (req) => {
     return createSuccessResponse(validationResult, req);
   } catch (error) {
     console.error('Connection validation error:', error);
-    return createErrorResponse(req, error instanceof Error ? error.message : 'Unknown error occurred', 500);
+    return createErrorResponse(req, error instanceof Error ? error.message : error, 500);
   }
 }); 

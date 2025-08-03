@@ -5,14 +5,16 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error("No active session");
 
-  const response = await supabase.functions.invoke(endpoint, {
-    body: options.body,
+  const invokeOptions: any = {
+    ...options,
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${session.access_token}`,
-      ...(options.headers as Record<string, string>),
+      ...options.headers,
     },
-  });
+  };
+
+  const response = await supabase.functions.invoke(endpoint, invokeOptions);
 
   if (response.error) throw new Error(response.error.message);
 
