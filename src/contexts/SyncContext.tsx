@@ -1,15 +1,14 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import { Sync, SyncTableMapping, SyncStage, defaultCreateSync } from "@/types/sync";
 import { useAuth } from "./AuthContext";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ConnectorWithConnections, fetchConnectors } from "@/services/connector/service";
+import { fetchConnectors } from "@/services/connector/service";
 import { fetchSyncById, saveSync } from "@/services/syncs/service";
 import { produce } from "immer";
+import { ConnectorWithConnections } from "@/types/connectors";
+import { defaultCreateSync, Sync, SyncProvider as SyncProviderType } from "@/types/sync";
 
-export type AccountSide = "source_id" | "destination_id";
-export type DataSourceSide = "source_database_id" | "destination_database_id";
-const STAGES: SyncStage[] = ["accounts", "data-sources", "postgresql", "airtable", "mappings", "filters", "ready"];
+const STAGES = ["accounts", "data-sources", "postgresql", "airtable", "mappings", "filters", "ready"];
 
 interface SyncContextType {
     syncConfig: Sync;
@@ -18,16 +17,17 @@ interface SyncContextType {
     setSelectedTableMappingId: (id: string | null) => void;
 
     setTitle: (title: string) => void;
-    setAccount: (value: string, field: AccountSide) => void;
-    setDataSource: (value: string, field: DataSourceSide) => void;
-    setPostgreSQLConnection: (connectionId: string) => void;
-    setPostgreSQLDatabase: (databaseId: string) => void;
-    setPostgreSQLTable: (tableId: string) => void;
+    // setAccount: (value: string, field: AccountSide) => void;
+    // setDataSource: (value: string, field: DataSourceSide) => void;
+    setConnection: (connectionId: string, provider: SyncProviderType) => void;
+    setDatabase: (databaseId: string, provider: SyncProviderType) => void;
+    setTable: (tableId: string, provider: SyncProviderType) => void;
     setAirtableConnection: (connectionId: string) => void;
     setAirtableBase: (baseId: string) => void;
     setAirtableTable: (tableId: string) => void;
-    setTableMappings: (value: SyncTableMapping[]) => void;
-    setStage: (stage: SyncStage) => void;
+
+    // setTableMappings: (value: SyncTableMapping[]) => void;
+    setStage: (stage: string) => void;
     saveAndAdvance: () => Promise<{ success: boolean; errors?: string[] }>;
     save: () => Promise<void>;
     reset: () => void;
@@ -57,60 +57,45 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setSyncConfig({ ...syncConfig, name: title });
     };
 
-    // set the account
-    const setAccount = (value: string, field: AccountSide) => {
-        setSyncConfig({ ...syncConfig, [field]: value });
-    };
-
-    // set the data source
-    const setDataSource = (value: string, field: DataSourceSide) => {
+    // set App connection
+    const setConnection = (connectionId: string, provider: "postgresql" | "supabase") => {
         setSyncConfig(current =>
             produce(current, draft => {
-                if (draft.config?.schema) {
-                    draft.config.schema[field] = value;
-                }
-            })
-        );
-    };
-
-    // set PostgreSQL connection
-    const setPostgreSQLConnection = (connectionId: string) => {
-        setSyncConfig(current =>
-            produce(current, draft => {
-                if (draft.config?.postgresql) {
-                    draft.config.postgresql.connection_id = connectionId;
+                if (draft.config?.[provider]) {
+                    draft.config[provider].connection_id = connectionId;
                 } else {
-                    draft.config.postgresql = { connection_id: connectionId };
+                    draft.config[provider] = { connection_id: connectionId, database_id: '', table_id: '' };
                 }
             })
         );
     };
 
-    // set PostgreSQL database
-    const setPostgreSQLDatabase = (databaseId: string) => {
+    // set App database
+    const setDatabase = (databaseId: string, provider: "postgresql" | "supabase") => {
         setSyncConfig(current =>
             produce(current, draft => {
-                if (draft.config?.postgresql) {
-                    draft.config.postgresql.database_id = databaseId;
+                if (draft.config?.[provider]) {
+                    draft.config[provider].database_id = databaseId;
                 } else {
-                    draft.config.postgresql = { database_id: databaseId };
+                    draft.config[provider] = { connection_id: '', database_id: databaseId, table_id: '' };
                 }
             })
         );
     };
 
-    // set PostgreSQL table
-    const setPostgreSQLTable = (tableId: string) => {
+    // set App table
+    const setTable = (tableId: string, provider: "postgresql" | "supabase") => {
         setSyncConfig(current =>
             produce(current, draft => {
-                if (draft.config?.postgresql) {
-                    draft.config.postgresql.table_id = tableId;
+                if (draft.config?.[provider]) {
+                    draft.config[provider].table_id = tableId;
                 } else {
-                    draft.config.postgresql = { table_id: tableId };
+                    draft.config[provider] = { connection_id: '', database_id: '', table_id: tableId };
                 }
             })
         );
     };
+
 
     // set Airtable connection
     const setAirtableConnection = (connectionId: string) => {
@@ -119,7 +104,7 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 if (draft.config?.airtable) {
                     draft.config.airtable.connection_id = connectionId;
                 } else {
-                    draft.config.airtable = { connection_id: connectionId };
+                    draft.config.airtable = { connection_id: connectionId, base_id: '', table_id: '' };
                 }
             })
         );
@@ -132,7 +117,7 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 if (draft.config?.airtable) {
                     draft.config.airtable.base_id = baseId;
                 } else {
-                    draft.config.airtable = { base_id: baseId };
+                    draft.config.airtable = { connection_id: '', base_id: baseId, table_id: '' };
                 }
             })
         );
@@ -145,27 +130,27 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 if (draft.config?.airtable) {
                     draft.config.airtable.table_id = tableId;
                 } else {
-                    draft.config.airtable = { table_id: tableId };
+                    draft.config.airtable = { connection_id: '', base_id: '', table_id: tableId };
                 }
             })
         );
     };
 
     // set the table mapping
-    const setTableMappings = (value: SyncTableMapping[]) => {
-        setSyncConfig(current =>
-            produce(current, draft => {
-                draft.config.schema.table_mappings = value;
-            })
-        );
-    };
+    // const setTableMappings = (value: SyncTableMapping[]) => {
+    //    setSyncConfig(current =>
+    //        produce(current, draft => {
+    //            draft.config.schema.table_mappings = value;
+    //        })
+    //    );
+    //};
 
     // set the stage
-    const setStage = (stage: SyncStage) => {
+    const setStage = (stage: string) => {
         setSyncConfig(current =>
             produce(current, draft => {
                 if (draft.config) {
-                    draft.config.stage = stage;
+                    draft.stage = stage;
                 }
             })
         );
@@ -176,8 +161,6 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const newSync = defaultCreateSync(user);
         setSyncConfig(prev => ({
             ...prev,
-            source_id: newSync.source_id,
-            destination_id: newSync.destination_id,
             config: newSync.config,
         }));
 
@@ -214,7 +197,7 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setSyncConfig(current =>
             produce(current, draft => {
                 if (draft.config) {
-                    draft.config.stage = nextStage;
+                    draft.stage = nextStage;
                 }
             })
         );
@@ -226,24 +209,19 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // private functions
 
     // Stage validators
-    const stageValidators: Record<SyncStage, () => string[]> = {
-        accounts: () => {
-            const errors: string[] = [];
-            if (!syncConfig?.source_id) errors.push("Source account is required");
-            if (!syncConfig?.destination_id) errors.push("Destination account is required");
-            return errors;
-        },
-        "data-sources": () => {
-            const errors: string[] = [];
-            if (!syncConfig?.config?.schema?.source_database_id) errors.push("Source database is required");
-            if (!syncConfig?.config?.schema?.destination_database_id) errors.push("Destination database is required");
-            return errors;
-        },
+    const stageValidators: Record<string, () => string[]> = {
         postgresql: () => {
             const errors: string[] = [];
             if (!syncConfig?.config?.postgresql?.connection_id) errors.push("PostgreSQL connection is required");
             if (!syncConfig?.config?.postgresql?.database_id) errors.push("PostgreSQL database is required");
             if (!syncConfig?.config?.postgresql?.table_id) errors.push("PostgreSQL table is required");
+            return errors;
+        },
+        supabase: () => {
+            const errors: string[] = [];
+            if (!syncConfig?.config?.supabase?.connection_id) errors.push("Supabase connection is required");
+            if (!syncConfig?.config?.supabase?.database_id) errors.push("Supabase database is required");
+            if (!syncConfig?.config?.supabase?.table_id) errors.push("Supabase table is required");
             return errors;
         },
         airtable: () => {
@@ -253,27 +231,14 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (!syncConfig?.config?.airtable?.table_id) errors.push("Airtable table is required");
             return errors;
         },
-        mappings: () => {
-            const errors: string[] = [];
-            const mappings = syncConfig?.config?.schema?.table_mappings || [];
-            if (!mappings.length) {
-                errors.push("At least one table mapping is required");
-            } else {
-                mappings.forEach((mapping, i) => {
-                    if (!mapping.field_mappings?.length) {
-                        errors.push(`Table mapping ${i + 1} must have at least one field mapping`);
-                    }
-                });
-            }
-            return errors;
-        },
+        mappings: () => [],
         filters: () => [],
         ready: () => [],
     };
 
-    const getStage = (): SyncStage => syncConfig?.config?.stage || "accounts";
+    const getStage = (): string => syncConfig?.stage || "accounts";
 
-    const getNextStage = (): SyncStage => {
+    const getNextStage = (): string => {
         const idx = STAGES.indexOf(getStage());
         return idx < STAGES.length - 1 ? STAGES[idx + 1] : STAGES[idx];
     };
@@ -291,15 +256,15 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             connectors,
             selectedTableMappingId,
             setSelectedTableMappingId,
-            setAccount,
-            setDataSource,
-            setPostgreSQLConnection,
-            setPostgreSQLDatabase,
-            setPostgreSQLTable,
+            // setAccount,
+            // setDataSource,
+            setConnection,
+            setDatabase,
+            setTable,
             setAirtableConnection,
             setAirtableBase,
             setAirtableTable,
-            setTableMappings,
+            // setTableMappings,
             setStage,
             saveAndAdvance,
             save,

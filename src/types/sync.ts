@@ -1,10 +1,11 @@
 // Simplified types for the focused Airtable <-> Postgres sync tool
 
-export type SyncDirection = 'airtable-to-postgres' | 'postgres-to-airtable' | 'two-way';
+import { User } from "@supabase/supabase-js";
 
+export type SyncDirection = 'airtable-to-postgres' | 'postgres-to-airtable' | 'airtable-to-supabase' | 'supabase-to-airtable' | 'two-way';
 export type SyncStatus = 'draft' | 'active' | 'paused' | 'error';
-
 export type LogStatus = 'success' | 'error' | 'partial';
+export type SyncProvider = 'airtable' | 'postgresql' | 'supabase';
 
 export interface SyncFieldMapping {
   id: string;
@@ -42,16 +43,37 @@ export interface AirtableConfig {
 export interface Sync {
   id: string;
   name: string;
+  stage: string;
   config: {
+    airtable: AirtableConfig;
     postgresql?: PostgreSQLConfig;
-    airtable?: AirtableConfig;
+    supabase?: PostgreSQLConfig; // Same config structure as postgresql
     auto_sync_enabled: boolean;
     sync_interval_minutes: number;
     sync_direction: SyncDirection;
-  last_sync_at: string | null;
+    last_sync_at: string | null;
   } | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
   user_id: string;
+}
+
+export const defaultCreateSync = (user: User): Sync => {
+  return {
+    id: '',
+    name: '',
+    stage: 'accounts',
+    config: {
+      airtable: { connection_id: '', base_id: '', table_id: '' },
+      auto_sync_enabled: false,
+      sync_interval_minutes: 0,
+      sync_direction: 'airtable-to-postgres', 
+      last_sync_at: null
+    },
+    is_active: false,
+    created_at: '',
+    updated_at: '',
+    user_id: user.id
+  }
 }

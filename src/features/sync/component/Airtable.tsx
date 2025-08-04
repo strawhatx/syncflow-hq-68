@@ -1,126 +1,78 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Database, Table, Plus, Check } from 'lucide-react';
 import ConnectorConnectModal from '@/components/connector/ConnectorConnectModal';
 import { Connector } from '@/types/connectors';
 import { useSync } from '@/contexts/SyncContext';
-import { fetchConnectors } from '@/services/connector/service';
-import { fetchConnectionDatabases, fetchTablesByDatabaseId } from '@/services/connections/service';
-import { TableOption } from '@/types/connectors';
 import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
-
-interface Base {
-  id: string;
-  name: string;
-  connection_id: string;
-}
+import { CustomSelectButton } from '@/components/ui_custom/CustomSelectButton';
+import { useConnectionSelection } from '../hooks/useConnectionSelection';
+import { useDatabaseSelection } from '../hooks/useDatasourceSelection';
+import { useTableSelection } from '../hooks/useTableSelection';
+import { CustomSelect } from '@/components/ui_custom/CustomSelect';
 
 export default function AirtableStep({ next }: { next: () => void }) {
-  const { connectors, setAirtableConnection, setAirtableBase, setAirtableTable, saveAndAdvance } = useSync();
+  const { 
+    syncConfig, 
+    connectors, 
+    setAirtableConnection, 
+    setAirtableBase, 
+    setAirtableTable, 
+    saveAndAdvance 
+  } = useSync();
   const queryClient = useQueryClient();
   const [connector, setConnector] = useState<Connector | null>(null);
-  const [bases, setBases] = useState<Base[]>([]);
-  const [tables, setTables] = useState<TableOption[]>([]);
-  const [selectedConnection, setSelectedConnection] = useState<string>('');
-  const [selectedBase, setSelectedBase] = useState<string>('');
-  const [selectedTable, setSelectedTable] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const connections = connectors?.find(c => c.provider === 'airtable')?.connections || [];
+  const { connection, setConnection, connections } = useConnectionSelection({
+    connectors,
+    provider: 'postgresql',
+    connection: syncConfig?.config?.postgresql?.connection_id,
+    setConnection: (id: string) => setAirtableConnection(id)
+  });
 
-  // Load Airtable connector and existing connections
-  useEffect(() => {
-    const loadConnectorAndConnections = async () => {
-      try {
-        const airtableConnector = connectors?.find(c => c.provider === 'airtable');
-        if (airtableConnector) {
-          setConnector(airtableConnector);
-        }
-      } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'Failed to load Airtable connector',
-          variant: 'destructive',
-        });
-      }
-    };
+  const { database, setDatabase, options: databases } = useDatabaseSelection({
+    connection: syncConfig?.config?.postgresql?.connection_id,
+    database: syncConfig?.config?.postgresql?.database_id,
+    setDatabase: (id: string) => setAirtableBase(id),
+    side: "source"
+  });
 
-    loadConnectorAndConnections();
-  }, [connectors]);
-
-  // Load bases when connection is selected
-  useEffect(() => {
-    if (selectedConnection) {
-      loadBases(selectedConnection);
-    }
-  }, [selectedConnection]);
-
-  // Load tables when base is selected
-  useEffect(() => {
-    if (selectedBase) {
-      loadTables(selectedBase);
-    }
-  }, [selectedBase]);
-
-  const loadBases = async (connectionId: string) => {
-    try {
-      setIsLoading(true);
-      const bases = await fetchConnectionDatabases(connectionId);
-      setBases(bases);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load Airtable bases',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadTables = async (baseId: string) => {
-    try {
-      setIsLoading(true);
-      const tables = await fetchTablesByDatabaseId(baseId, 'airtable');
-      setTables(tables);
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load Airtable tables',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { table, setTable, options: tables } = useTableSelection({
+    database: syncConfig?.config?.postgresql?.database_id,
+    table: syncConfig?.config?.postgresql?.table_id,
+    setTable: (id: string) => setAirtableTable(id),
+    provider: 'postgresql',
+    side: 'source'
+  });
 
   const handleConnectionCreated = (newConnection: any) => {
     // Invalidate and refetch the connectors query to get updated connections
     queryClient.invalidateQueries({ queryKey: ['connectors'] });
-    
-    setSelectedConnection(newConnection.id);
-    setAirtableConnection(newConnection.id);
+
+    setConnection(newConnection.id);
+  };
+
+  const onCreateNew = () => {
+    const postgresConnector = connectors?.find(c => c.provider === 'postgresql');
+    setConnector(postgresConnector);
   };
 
   const handleNext = async () => {
-    if (!selectedConnection || !selectedBase || !selectedTable) {
+    if (!connection || !database || !table) {
       toast({
         title: 'Error',
-        description: 'Please select a connection, base, and table',
+        description: 'Please select a connection, database, and table',
         variant: 'destructive',
       });
       return;
     }
 
     try {
-      setAirtableConnection(selectedConnection);
-      setAirtableBase(selectedBase);
-      setAirtableTable(selectedTable);
-      
+      setAirtableConnection(connection);
+      setAirtableBase(database);
+      setAirtableTable(table);
+
       await saveAndAdvance();
       next();
     } catch (error) {
@@ -132,140 +84,58 @@ export default function AirtableStep({ next }: { next: () => void }) {
     }
   };
 
-  const selectedConnectionData = connections.find(c => c.id === selectedConnection);
-  const selectedBaseData = bases.find(b => b.id === selectedBase);
-  const selectedTableData = tables.find(t => t.id === selectedTable);
-
   return (
     <div className="space-y-6">
       {/* Connection Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <img src="/svg/airtable-icon.svg" alt="Airtable" className="w-5 h-5" />
-            Airtable Connection
-          </CardTitle>
-          <CardDescription>
-            Select an existing Airtable connection or create a new one
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {connections.length > 0 ? (
-            <div className="space-y-2">
-              <Select value={selectedConnection} onValueChange={setSelectedConnection}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a connection" />
-                </SelectTrigger>
-                <SelectContent>
-                  {connections.map((connection) => (
-                    <SelectItem key={connection.id} value={connection.id}>
-                      {connection.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              {selectedConnectionData && (
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{selectedConnectionData.name}</Badge>
-                  <Check className="w-4 h-4 text-green-500" />
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-4 text-gray-500">
-              No Airtable connections found
-            </div>
-          )}
+      <div>
+        <div className="space-y-4">
+          <CustomSelectButton
+            value={connection || ""}
+            onValueChange={(value: any) => setConnection(value)}
+            options={connections?.map((conn: { id: any; account_identifier: any; }) => ({
+              id: conn.id,
+              name: conn.account_identifier,
+            })) || []}
+            placeholder={`Select connection`}
+            isLoading={false}
+            onCreateNew={onCreateNew}
+          />
+        </div>
+      </div>
 
-          <Button
-            onClick={() => setConnector(connector)}
-            className="w-full"
-            variant="outline"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create New Connection
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Base Selection */}
-      {selectedConnection && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Database className="w-5 h-5" />
-              Airtable Base
-            </CardTitle>
-            <CardDescription>
-              Select the Airtable base you want to sync
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedBase} onValueChange={setSelectedBase}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a base" />
-              </SelectTrigger>
-              <SelectContent>
-                {bases.map((base) => (
-                  <SelectItem key={base.id} value={base.id}>
-                    {base.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {selectedBaseData && (
-              <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary">{selectedBaseData.name}</Badge>
-                <Check className="w-4 h-4 text-green-500" />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {/* Database Selection */}
+      {connection && (
+        <CustomSelect
+          value={database || ""}
+          onValueChange={(value: any) => setDatabase(value)}
+          options={databases?.map((db: { id: any; name: any; }) => ({
+            id: db.id,
+            name: db.name,
+          })) || []}
+          placeholder={`Select database`}
+          isLoading={false}
+        />
       )}
 
       {/* Table Selection */}
-      {selectedBase && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Table className="w-5 h-5" />
-              Airtable Table
-            </CardTitle>
-            <CardDescription>
-              Select the Airtable table you want to sync
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedTable} onValueChange={setSelectedTable}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a table" />
-              </SelectTrigger>
-              <SelectContent>
-                {tables.map((table) => (
-                  <SelectItem key={table.id} value={table.id}>
-                    {table.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {selectedTableData && (
-              <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary">{selectedTableData.name}</Badge>
-                <Check className="w-4 h-4 text-green-500" />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {database && (
+        <CustomSelect
+          value={table || ""}
+          onValueChange={(value: any) => setTable(value)}
+          options={tables?.map((db: { id: any; name: any; }) => ({
+            id: db.id,
+            name: db.name,
+          })) || []}
+          placeholder={`Select table`}
+          isLoading={false}
+        />
       )}
 
       {/* Next Button */}
       <div className="flex justify-end">
         <Button
           onClick={handleNext}
-          disabled={!selectedConnection || !selectedBase || !selectedTable || isLoading}
+          disabled={!connection || !database || !table || isLoading}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
         >
           Next

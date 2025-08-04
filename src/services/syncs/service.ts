@@ -1,18 +1,18 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Sync, defaultCreateSync } from "@/types/sync";
+import { PostgresSync, SupabaseSync, Sync } from "@/types/sync";
 import { User } from "@supabase/supabase-js";
 
 // Map database row to Sync type
-const mapDbRowToSync = (row: any): Sync => {
+const mapDbRowToSync = (row: any): PostgresSync | SupabaseSync => {
   return {
     id: row.id,
     name: row.name,
-    source_id: row.source_id || '',
-    destination_id: row.destination_id || '',
-    created_by: row.user_id || '',
+    stage: row.stage || 'accounts',
+    is_active: row.is_active || false,
+    created_at: row.created_at || '',
+    updated_at: row.updated_at || '',
     user_id: row.user_id || '',
-    config: row.config || {},
-    status: row.status || 'draft'
+    config: row.config || {}
   };
 };
 
@@ -39,7 +39,7 @@ export const fetchSyncsByUserId = async (userId: string): Promise<Sync[]> => {
   return (data || []).map(mapDbRowToSync);
 };
 
-export const fetchSyncById = async (id: string): Promise<Sync | null> => {
+export const fetchSyncById = async (id: string): Promise<PostgresSync | SupabaseSync | null> => {
   const { data, error } = await supabase
     .from('syncs')
     .select('*')

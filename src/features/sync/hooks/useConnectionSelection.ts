@@ -10,8 +10,6 @@ interface UseConnectionSelectionProps {
 
 export const useConnectionSelection = (props: UseConnectionSelectionProps) => {
   const { connectors, provider, connection, setConnection } = props;
-  const [database, setDatabase] = useState<string>('');
-  const [table, setTable] = useState<string>('');
 
   // When account changes, update context
   const handleConnectionChange = (newAccountId: string) => {

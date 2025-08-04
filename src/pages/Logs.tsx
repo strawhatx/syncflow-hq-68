@@ -13,15 +13,15 @@ import {
   Database,
   Activity
 } from 'lucide-react';
-import { syncService } from '@/services/sync-simple/service';
 import { SyncDirection, SyncLog } from '@/types/sync';
 import { formatDistanceToNow, format } from 'date-fns';
+import { getRecentLogs } from '@/services/sync_logs/service';
 
 export default function LogsPage() {
   // Fetch all logs (not just recent ones)
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ['all-logs'],
-    queryFn: () => syncService.getRecentLogs(100) // Get more logs for the dedicated page
+    queryFn: () => getRecentLogs(100) // Get more logs for the dedicated page
   });
 
   const getLogStatusIcon = (status: string) => {
@@ -111,7 +111,7 @@ export default function LogsPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="font-semibold text-lg">{log.sync_name}</h3>
+                          <h3 className="font-semibold text-lg">name</h3>
                           {getStatusBadge(log.status)}
                         </div>
                         
