@@ -5,26 +5,69 @@
 
 @layer base {
   :root {
+    /* Light theme - clean neutral backgrounds with indigo accents */
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 225 6% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 225 6% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 215 75% 50%;
+    --popover-foreground: 225 6% 13%;
+    --primary: 238 75% 60%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 225 80% 96%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 225 6% 13%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 225 6% 46%;
+    --accent: 238 75% 95%;
+    --accent-foreground: 238 75% 15%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 215 75% 50%;
+    --border: 220 14% 91%;
+    --input: 220 14% 91%;
+    --ring: 238 75% 60%;
     --radius: 0.5rem;
+    
+    /* Developer-focused gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(238 75% 60%), hsl(250 75% 65%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 14% 98%));
+    
+    /* Elegant shadows using primary color */
+    --shadow-elegant: 0 10px 30px -10px hsl(238 75% 60% / 0.15);
+    --shadow-glow: 0 0 40px hsl(238 75% 60% / 0.2);
+    
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    /* Dark theme - near-black with indigo accents */
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 238 75% 60%;
+    --primary-foreground: 224 71% 4%;
+    --secondary: 216 28% 7%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 216 28% 7%;
+    --muted-foreground: 216 28% 65%;
+    --accent: 216 28% 12%;
+    --accent-foreground: 213 31% 91%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 213 31% 91%;
+    --border: 216 28% 12%;
+    --input: 216 28% 12%;
+    --ring: 238 75% 60%;
+    
+    /* Dark theme gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(238 75% 60%), hsl(250 75% 65%));
+    --gradient-subtle: linear-gradient(180deg, hsl(224 71% 4%), hsl(216 28% 7%));
+    
+    /* Dark shadows with glow */
+    --shadow-elegant: 0 10px 30px -10px hsl(238 75% 60% / 0.3);
+    --shadow-glow: 0 0 40px hsl(238 75% 60% / 0.4);
   }
 
   * {
@@ -37,16 +80,24 @@
 }
 
 @layer components {
+  /* Enhanced component styles using design system */
   .card-hover {
-    @apply transition-all duration-200 hover:shadow-md;
+    @apply transition-all duration-300 hover:shadow-lg;
+    box-shadow: var(--shadow-elegant);
+  }
+  
+  .card-hover:hover {
+    box-shadow: var(--shadow-glow);
   }
   
   .sidebar-item {
-    @apply flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors;
+    @apply flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md;
+    transition: var(--transition-smooth);
   }
   
   .sidebar-item-active {
-    @apply bg-accent text-primary;
+    @apply bg-accent text-primary border border-primary/20;
+    box-shadow: var(--shadow-elegant);
   }
   
   .sidebar-item-inactive {
@@ -69,27 +120,58 @@
     @apply px-4 py-3 text-sm;
   }
   
+  /* Enhanced badges using semantic colors */
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    transition: var(--transition-smooth);
   }
   
   .badge-success {
-    @apply bg-green-100 text-green-800;
+    @apply bg-emerald-100 text-emerald-800 border border-emerald-200;
+  }
+  
+  .dark .badge-success {
+    @apply bg-emerald-900/20 text-emerald-400 border-emerald-500/20;
   }
   
   .badge-error {
-    @apply bg-red-100 text-red-800;
+    @apply bg-red-100 text-red-800 border border-red-200;
+  }
+  
+  .dark .badge-error {
+    @apply bg-red-900/20 text-red-400 border-red-500/20;
   }
   
   .badge-warning {
-    @apply bg-yellow-100 text-yellow-800;
+    @apply bg-amber-100 text-amber-800 border border-amber-200;
+  }
+  
+  .dark .badge-warning {
+    @apply bg-amber-900/20 text-amber-400 border-amber-500/20;
   }
   
   .badge-info {
-    @apply bg-blue-100 text-blue-800;
+    @apply bg-primary/10 text-primary border border-primary/20;
   }
   
   .shimmer {
-    @apply relative overflow-hidden bg-gray-200 rounded animate-pulse;
+    @apply relative overflow-hidden bg-muted rounded animate-pulse;
+  }
+  
+  /* Developer-focused button variants */
+  .btn-gradient {
+    background: var(--gradient-primary);
+    @apply text-white border-0 shadow-lg;
+    transition: var(--transition-smooth);
+  }
+  
+  .btn-gradient:hover {
+    box-shadow: var(--shadow-glow);
+    @apply scale-105;
+  }
+  
+  /* Code-like elements */
+  .code-style {
+    @apply font-mono text-sm bg-muted px-2 py-1 rounded border;
   }
 }

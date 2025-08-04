@@ -2,16 +2,26 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Database, Zap, Shield, Users, ArrowRight, CheckCircle, GitBranch, Settings, Monitor, Mail } from 'lucide-react';
+import { 
+  ArrowRight, 
+  Database, 
+  Zap, 
+  Shield, 
+  Code, 
+  GitBranch, 
+  Check,
+  ArrowUpRight,
+  Mail,
+  Github,
+  Terminal,
+  Clock,
+  Users
+} from 'lucide-react';
 
 const IndexPage = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  console.log('IndexPage rendering...');
-
   const { user } = useAuth();
-  console.log('User in IndexPage:', user);
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,105 +31,97 @@ const IndexPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="px-6 py-4 bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <div className="flex items-center space-x-2">
-            <GitBranch className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold text-white">Syncflow</span>
+            <div className="flex items-center justify-center w-8 h-8 bg-primary rounded-lg">
+              <Database className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="text-xl font-bold text-foreground">Syncflow</span>
           </div>
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-            <a href="#connectors" className="text-gray-300 hover:text-white transition-colors">Connectors</a>
-            <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
-              {user ? (
-                <Button className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors' asChild>
-                  <Link to="/syncs">Dashboard</Link>
+            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
+            <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">How it works</a>
+            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+            {user ? (
+              <Button asChild>
+                <Link to="/syncs">Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/auth">Login</Link>
                 </Button>
-              ) : (
-                <>
-                  <Button variant="ghost" asChild>
-                    <Link to="/auth">Login</Link>
-                  </Button>
-                  <Button className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors' asChild>
-                    <Link to="/auth">Get Started</Link>
-                  </Button>
-                </>
-              )}
-
+                <Button asChild>
+                  <Link to="/auth">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="px-6 py-20">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="container mx-auto px-6 py-20 text-center">
+        <div className="mx-auto max-w-4xl">
           <div className="mb-8">
-            <span className="inline-block bg-blue-500/20 text-blue-300 px-4 py-2 rounded-full text-sm font-medium border border-blue-500/30">
-              🚀 Now in Beta - Join the Waitlist
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
+              <Zap className="h-4 w-4" />
+              Now in Beta
             </span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
-            Sync anything.
+          
+          <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            Sync Airtable and Postgres
             <br />
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              2-way. In minutes.
+            <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              — both ways.
             </span>
           </h1>
-          <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            The easiest way to sync structured data across your stack. Replace brittle scripts and expensive ETL tools with visual, versioned sync flows.
+          
+          <p className="mb-8 text-xl text-muted-foreground max-w-2xl mx-auto">
+            No Zapier. No cron jobs. No surprises.
+            <br />
+            Built for developers who want simple, reliable data sync.
           </p>
           
-          {/* Waitlist Form */}
-          <form onSubmit={handleWaitlistSubmit} className="max-w-md mx-auto mb-16">
-            <div className="flex gap-4">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
-                required
-              />
-              <button
-                type="submit"
-                disabled={isSubmitted}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isSubmitted ? (
-                  <>
-                    <CheckCircle className="h-5 w-5" />
-                    Added!
-                  </>
-                ) : (
-                  <>
-                    Join Waitlist
-                    <ArrowRight className="h-5 w-5" />
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <Button size="lg" className="btn-gradient">
+              Connect and sync your first table free
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button variant="outline" size="lg">
+              <Github className="mr-2 h-5 w-5" />
+              View on GitHub
+            </Button>
+          </div>
 
-          {/* Demo Preview */}
-          <div className="relative">
-            <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-8 rounded-2xl border border-white/10 backdrop-blur-sm">
+          {/* Visual Demo */}
+          <div className="relative mx-auto max-w-3xl">
+            <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                <div className="bg-white/10 p-6 rounded-xl border border-white/20">
-                  <Database className="h-8 w-8 text-blue-400 mb-3" />
-                  <h3 className="text-white font-semibold mb-2">Supabase</h3>
-                  <p className="text-gray-400 text-sm">Production Database</p>
+                <div className="p-6 rounded-xl border border-border bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900">
+                  <div className="flex items-center justify-center w-12 h-12 bg-orange-500 rounded-lg mb-4 mx-auto">
+                    <Database className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-orange-900 dark:text-orange-100 mb-1">Airtable</h3>
+                  <p className="text-sm text-orange-700 dark:text-orange-300">Team workspace</p>
                 </div>
+                
                 <div className="flex justify-center">
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-full">
-                    <Zap className="h-6 w-6 text-white animate-pulse" />
+                  <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full">
+                    <ArrowRight className="h-6 w-6 text-primary-foreground animate-pulse" />
                   </div>
                 </div>
-                <div className="bg-white/10 p-6 rounded-xl border border-white/20">
-                  <Database className="h-8 w-8 text-green-400 mb-3" />
-                  <h3 className="text-white font-semibold mb-2">MongoDB</h3>
-                  <p className="text-gray-400 text-sm">Analytics Warehouse</p>
+                
+                <div className="p-6 rounded-xl border border-border bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+                  <div className="flex items-center justify-center w-12 h-12 bg-blue-500 rounded-lg mb-4 mx-auto">
+                    <Database className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">PostgreSQL</h3>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">Production database</p>
                 </div>
               </div>
             </div>
@@ -128,152 +130,286 @@ const IndexPage = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="px-6 py-20 bg-black/20">
-        <div className="max-w-7xl mx-auto">
+      <section id="features" className="bg-muted/50 py-20">
+        <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Why Choose Syncflow?</h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Built for developers who need reliable, scalable data synchronization without the complexity
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Built for developers who value simplicity
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Everything you need for reliable data synchronization, nothing you don't.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
-              <Zap className="h-12 w-12 text-blue-400 mb-6" />
-              <h3 className="text-xl font-semibold text-white mb-4">2-Way Syncing</h3>
-              <p className="text-gray-300">
-                Bi-directional data flow with intelligent conflict resolution. Changes sync both ways, automatically.
+            <div className="p-6 rounded-xl bg-card border border-border card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mb-4">
+                <Zap className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-3">2-Way Sync</h3>
+              <p className="text-muted-foreground">
+                Changes flow both directions automatically. Update in Airtable or Postgres — it just works.
               </p>
             </div>
             
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
-              <Settings className="h-12 w-12 text-purple-400 mb-6" />
-              <h3 className="text-xl font-semibold text-white mb-4">Visual Mapping</h3>
-              <p className="text-gray-300">
-                Drag-and-drop field mapping with custom transformations. No code required for common use cases.
+            <div className="p-6 rounded-xl bg-card border border-border card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mb-4">
+                <Terminal className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Schema Mapping</h3>
+              <p className="text-muted-foreground">
+                Visual field mapping with type conversion. Map Airtable columns to Postgres fields effortlessly.
               </p>
             </div>
             
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
-              <Shield className="h-12 w-12 text-green-400 mb-6" />
-              <h3 className="text-xl font-semibold text-white mb-4">Secure by Default</h3>
-              <p className="text-gray-300">
-                Encrypted credential storage, VPC support, and audit logs. Enterprise-grade security built-in.
+            <div className="p-6 rounded-xl bg-card border border-border card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mb-4">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Secure by Default</h3>
+              <p className="text-muted-foreground">
+                Encrypted credentials, audit logs, and SOC 2 compliance. Your data stays safe.
               </p>
             </div>
             
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
-              <Monitor className="h-12 w-12 text-yellow-400 mb-6" />
-              <h3 className="text-xl font-semibold text-white mb-4">Real-time Monitoring</h3>
-              <p className="text-gray-300">
-                Live sync status, detailed logs, and intelligent alerting. Know exactly what's happening with your data.
+            <div className="p-6 rounded-xl bg-card border border-border card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mb-4">
+                <Clock className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Real-time Sync</h3>
+              <p className="text-muted-foreground">
+                Near-instant synchronization with intelligent conflict resolution and retry logic.
               </p>
             </div>
             
-            <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
-              <GitBranch className="h-12 w-12 text-orange-400 mb-6" />
-              <h3 className="text-xl font-semibold text-white mb-4">Version Control</h3>
-              <p className="text-gray-300">
-                Version your sync configurations like code. Rollback changes, compare versions, and deploy with confidence.
+            <div className="p-6 rounded-xl bg-card border border-border card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mb-4">
+                <Code className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Developer API</h3>
+              <p className="text-muted-foreground">
+                REST API, webhooks, and SDKs. Integrate Syncflow into your existing workflows.
+              </p>
+            </div>
+            
+            <div className="p-6 rounded-xl bg-card border border-border card-hover">
+              <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mb-4">
+                <GitBranch className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Version Control</h3>
+              <p className="text-muted-foreground">
+                Track configuration changes like code. Rollback, compare, and deploy with confidence.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Connectors Section */}
-      <section id="connectors" className="px-6 py-20">
-        <div className="max-w-7xl mx-auto">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20">
+        <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Connect Everything</h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Pre-built connectors for all your favorite databases and services
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Three steps to sync everything
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Get up and running in under 5 minutes
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {[
-              { name: 'Supabase', color: 'bg-green-500' },
-              { name: 'PostgreSQL', color: 'bg-blue-500' },
-              { name: 'MongoDB', color: 'bg-green-600' },
-              { name: 'MySQL', color: 'bg-orange-500' },
-              { name: 'Redis', color: 'bg-red-500' },
-              { name: 'S3', color: 'bg-yellow-500' },
-              { name: 'Snowflake', color: 'bg-blue-400' },
-              { name: 'BigQuery', color: 'bg-blue-600' },
-              { name: 'Salesforce', color: 'bg-blue-500' },
-              { name: 'Stripe', color: 'bg-purple-500' },
-              { name: 'Airtable', color: 'bg-yellow-600' },
-              { name: 'Notion', color: 'bg-gray-700' }
-            ].map((connector, index) => (
-              <div key={index} className="bg-white/5 p-6 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-200 hover:transform hover:scale-105 text-center">
-                <div className={`w-12 h-12 ${connector.color} rounded-lg mx-auto mb-3 flex items-center justify-center`}>
-                  <Database className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-white font-medium text-sm">{connector.name}</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full mx-auto mb-6">
+                <span className="text-2xl font-bold text-primary-foreground">1</span>
               </div>
-            ))}
+              <h3 className="text-xl font-semibold text-foreground mb-4">Connect</h3>
+              <p className="text-muted-foreground">
+                Link your Airtable base and PostgreSQL database. We support Supabase, RDS, and self-hosted instances.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full mx-auto mb-6">
+                <span className="text-2xl font-bold text-primary-foreground">2</span>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-4">Map</h3>
+              <p className="text-muted-foreground">
+                Visual field mapping interface. Match Airtable columns to database fields with type conversion and validation.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="flex items-center justify-center w-16 h-16 bg-primary rounded-full mx-auto mb-6">
+                <span className="text-2xl font-bold text-primary-foreground">3</span>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-4">Sync</h3>
+              <p className="text-muted-foreground">
+                Choose sync direction and frequency. Your data stays in sync automatically, with full audit trails.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="bg-muted/50 py-20">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Simple, transparent pricing
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Start free, scale as you grow
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="p-8 rounded-xl bg-card border border-border">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-foreground mb-2">Free</h3>
+                <p className="text-muted-foreground">Perfect for trying out Syncflow</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold text-foreground">$0</span>
+                <span className="text-muted-foreground">/month</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">1 project</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">1 sync table</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">1,000 rows/month</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">Community support</span>
+                </li>
+              </ul>
+              <Button variant="outline" className="w-full" size="lg">
+                Get Started Free
+              </Button>
+            </div>
+            
+            <div className="p-8 rounded-xl bg-card border-2 border-primary relative">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                  Most Popular
+                </span>
+              </div>
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-foreground mb-2">Pro</h3>
+                <p className="text-muted-foreground">For growing teams and projects</p>
+              </div>
+              <div className="mb-6">
+                <span className="text-4xl font-bold text-foreground">$49</span>
+                <span className="text-muted-foreground">/month</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">Unlimited projects</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">Unlimited sync tables</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">100,000 rows/month</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">Priority support</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">Advanced webhooks</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 text-emerald-500 mr-3" />
+                  <span className="text-foreground">Team collaboration</span>
+                </li>
+              </ul>
+              <Button className="w-full btn-gradient" size="lg">
+                Start Free Trial
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="px-6 py-20 bg-gradient-to-r from-blue-600/20 to-purple-600/20">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to eliminate data drift forever?
-          </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join hundreds of developers who've already streamlined their data workflows with Syncflow.
-          </p>
-          <form onSubmit={handleWaitlistSubmit} className="max-w-md mx-auto">
-            <div className="flex gap-4">
+      <section className="py-20">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold text-foreground mb-6">
+              Ready to keep your data in sync?
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8">
+              Join developers who've eliminated data drift with Syncflow.
+            </p>
+            
+            <form onSubmit={handleWaitlistSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mb-8">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-sm"
+                className="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 required
               />
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitted}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="btn-gradient"
+                size="lg"
               >
                 {isSubmitted ? (
                   <>
-                    <CheckCircle className="h-5 w-5" />
+                    <Check className="mr-2 h-5 w-5" />
                     Added!
                   </>
                 ) : (
                   <>
                     Get Early Access
-                    <Mail className="h-5 w-5" />
+                    <Mail className="ml-2 h-5 w-5" />
                   </>
                 )}
-              </button>
-            </div>
-          </form>
+              </Button>
+            </form>
+            
+            <p className="text-sm text-muted-foreground">
+              No spam. We'll only email you about important updates.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-12 bg-black/40 border-t border-white/10">
-        <div className="max-w-7xl mx-auto">
+      <footer className="border-t border-border bg-muted/30 py-12">
+        <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <GitBranch className="h-6 w-6 text-blue-400" />
-              <span className="text-xl font-bold text-white">Syncflow</span>
+              <div className="flex items-center justify-center w-8 h-8 bg-primary rounded-lg">
+                <Database className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold text-foreground">Syncflow</span>
             </div>
-            <div className="flex items-center space-x-6 text-gray-400">
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
-              <a href="#" className="hover:text-white transition-colors">Contact</a>
+            <div className="flex items-center space-x-6 text-muted-foreground">
+              <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
+              <a href="#" className="hover:text-foreground transition-colors">Terms</a>
+              <a href="#" className="hover:text-foreground transition-colors">Documentation</a>
+              <a href="#" className="hover:text-foreground transition-colors">Support</a>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-white/10 text-center text-gray-400">
-            <p>&copy; 2025 Syncflow. All rights reserved.</p>
+          <div className="mt-8 pt-8 border-t border-border text-center text-muted-foreground">
+            <p>&copy; 2025 Syncflow. Built for developers who value simplicity.</p>
           </div>
         </div>
       </footer>
