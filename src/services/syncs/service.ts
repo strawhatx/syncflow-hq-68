@@ -8,6 +8,7 @@ const mapDbRowToSync = (row: any): PostgresSync | SupabaseSync => {
     id: row.id,
     name: row.name,
     stage: row.stage || 'accounts',
+    sync_type: row.sync_type || 'postgres-to-airtable',
     is_active: row.is_active || false,
     created_at: row.created_at || '',
     updated_at: row.updated_at || '',
@@ -50,7 +51,7 @@ export const fetchSyncById = async (id: string): Promise<PostgresSync | Supabase
   return data ? mapDbRowToSync(data) : null;
 };
 
-export const createInitialSync = async (user: User): Promise<any> => {
+export const createInitialSync = async (user: User, syncType: 'supabase-to-airtable' | 'postgres-to-airtable' = 'postgres-to-airtable'): Promise<any> => {
   if (!user?.id) throw new Error("User not authenticated");
   
   const { data, error } = await supabase
@@ -58,6 +59,7 @@ export const createInitialSync = async (user: User): Promise<any> => {
     .insert({
       name: `New Sync ${new Date().toLocaleDateString()}`,
       user_id: user.id,
+      sync_type: syncType,
       config: { stage: 'accounts' }
     })
     .select()

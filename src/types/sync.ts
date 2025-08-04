@@ -44,6 +44,7 @@ export interface Sync {
   id: string;
   name: string;
   stage: string;
+  sync_type?: 'supabase-to-airtable' | 'postgres-to-airtable';
   config: {
     airtable: AirtableConfig;
     postgresql?: PostgreSQLConfig;
@@ -58,6 +59,10 @@ export interface Sync {
   updated_at: string;
   user_id: string;
 }
+
+// For compatibility with the syncs feature
+export interface PostgresSync extends Sync {}
+export interface SupabaseSync extends Sync {}
 
 export const defaultCreateSync = (user: User): Sync => {
   return {
