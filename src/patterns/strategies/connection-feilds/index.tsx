@@ -6,6 +6,7 @@ import { PostgresFieldsStrategy } from "./postgres";
 import { MongoFieldsStrategy } from "./mongo";
 import { MySQLFieldsStrategy } from "./mysql";
 import { SQLServerFieldsStrategy } from "./sqlserver";
+import { SupabaseFieldsStrategy } from "./supabase";
 
 export interface ConnectionFieldsStrategy {
     getDefaults(): Record<string, any>;
@@ -42,6 +43,8 @@ export class ConnectionFieldsStrategyFactory {
                 return new MySQLFieldsStrategy();
             case "sqlserver":
                 return new SQLServerFieldsStrategy();
+            case "supabase":
+                return new SupabaseFieldsStrategy();
 
             default:
                 return new DefaultFieldsStrategy();

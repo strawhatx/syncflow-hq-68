@@ -77,7 +77,7 @@ export interface Sync {
   id: string;
   name: string;
   stage: string;
-  sync_type?: 'supabase-to-airtable' | 'postgres-to-airtable';
+  sync_type: 'supabase-to-airtable' | 'postgres-to-airtable';
   config: SyncConfig | null;
   is_active: boolean;
   created_at: string;

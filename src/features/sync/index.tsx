@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { sanitizeField } from "@/lib/sanitize";
 import { useSync } from "@/contexts/SyncContext";
+import SupabaseStep from "./component/Supabase";
 
 // Step state enum for cleaner logic
 enum StepState {
@@ -24,21 +25,34 @@ enum TransitionState {
     OPENING = 'opening'
 }
 
-const steps = [
-    {
+interface StepType {
+    id: number;
+    stage: string;
+    label: string;
+    description: string;
+    component: React.ComponentType<any>;
+
+}
+
+const firstStep = {
+    'postgres-to-airtable': {
         id: 1,
         stage: "postgresql",
         label: "configure PostgreSQL connection",
         description: "Set up your PostgreSQL connection and select database/table",
         component: PostgreSQLStep,
     },
-    {
-        id: 2,
-        stage: "airtable",
-        label: "configure Airtable connection",
-        description: "Set up your Airtable connection and select base/table",
-        component: AirtableStep,
-    },
+
+    'supabase-to-airtable': {
+        id: 1,
+        stage: "supabase",
+        label: "configure Supabase connection",
+        description: "Set up your Supabase connection and select database/table",
+        component: SupabaseStep,
+    }
+}
+
+const otherSteps = [
     {
         id: 4,
         stage: "mappings",
@@ -90,7 +104,7 @@ const getStepIndicator = (state: StepState) => {
     }
 };
 
-const getStepLabel = (step: typeof steps[0], state: StepState, onClick?: () => void) => {
+const getStepLabel = (step: StepType, state: StepState, onClick?: () => void) => {
     const baseClasses = "text-md font-semibold";
     const stateClasses = {
         [StepState.COMPLETED]: "text-gray-300 hover:underline cursor-pointer",
@@ -108,7 +122,7 @@ const getStepLabel = (step: typeof steps[0], state: StepState, onClick?: () => v
 };
 
 const getStepContent = (
-    step: typeof steps[0],
+    step: StepType,
     state: StepState,
     onNext?: () => void,
     transitionState: TransitionState = TransitionState.IDLE
@@ -177,6 +191,10 @@ export default function Sync() {
     const [previousStep, setPreviousStep] = useState<number | null>(null);
     const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { syncConfig, setTitle, reset, save } = useSync();
+
+    const syncType = syncConfig?.sync_type;
+
+    const steps = [firstStep[syncType], ...otherSteps];
 
     // Initialize step index based on saved stage
     useEffect(() => {

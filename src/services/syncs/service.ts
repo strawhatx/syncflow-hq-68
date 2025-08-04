@@ -3,11 +3,12 @@ import { PostgresSync, SupabaseSync, Sync } from "@/types/sync";
 import { User } from "@supabase/supabase-js";
 
 // Map database row to Sync type
-const mapDbRowToSync = (row: any): PostgresSync | SupabaseSync => {
+const mapDbRowToSync = (row: any): Sync => {
   return {
     id: row.id,
     name: row.name,
     stage: row.stage || 'accounts',
+    status: row.status || 'draft',
     sync_type: row.sync_type || 'postgres-to-airtable',
     is_active: row.is_active || false,
     created_at: row.created_at || '',
@@ -40,7 +41,7 @@ export const fetchSyncsByUserId = async (userId: string): Promise<Sync[]> => {
   return (data || []).map(mapDbRowToSync);
 };
 
-export const fetchSyncById = async (id: string): Promise<PostgresSync | SupabaseSync | null> => {
+export const fetchSyncById = async (id: string): Promise<Sync | null> => {
   const { data, error } = await supabase
     .from('syncs')
     .select('*')

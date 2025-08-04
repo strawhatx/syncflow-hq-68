@@ -12,7 +12,9 @@ export type FieldType =
   | "hostname"
   | "awsAccessKey"
   | "awsRegion"
-  | "filePath";
+  | "filePath"
+  | "apiKey"
+  | "projectUrl";
 
 interface SanitizeOptions {
   /**

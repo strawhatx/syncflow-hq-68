@@ -92,9 +92,9 @@ export default function PostgreSQLStep({ next }: { next: () => void }) {
           <CustomSelectButton
             value={connection || ""}
             onValueChange={(value: any) => setConnection(value)}
-            options={connections?.map((conn: { id: any; account_identifier: any; }) => ({
+            options={connections?.map((conn: { id: any; name: any; }) => ({
               id: conn.id,
-              name: conn.account_identifier,
+              name: conn.name,
             })) || []}
             placeholder={`Select connection`}
             isLoading={false}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ConnectorConnectModal from '@/components/connector/ConnectorConnectModal';
 import { Connector } from '@/types/connectors';
@@ -26,14 +26,14 @@ export default function SupabaseStep({ next }: { next: () => void }) {
 
   const { connection, setConnection, connections } = useConnectionSelection({
     connectors,
-    provider: 'postgresql',
-    connection: syncConfig?.config?.postgresql?.connection_id,
+    provider: 'supabase',
+    connection: syncConfig?.config?.supabase?.connection_id,
     setConnection: (id: string) => setSupabaseConnection(id, 'supabase')
   });
 
   const { database, setDatabase, options: databases } = useDatabaseSelection({
-    connection: syncConfig?.config?.postgresql?.connection_id,
-    database: syncConfig?.config?.postgresql?.database_id,
+    connection: syncConfig?.config?.supabase?.connection_id,
+    database: syncConfig?.config?.supabase?.database_id,
     setDatabase: (id: string) => setSupabaseDatabase(id, 'supabase'),
     side: "source"
   });
@@ -54,8 +54,8 @@ export default function SupabaseStep({ next }: { next: () => void }) {
   };
 
   const onCreateNew = () => {
-    const postgresConnector = connectors?.find(c => c.provider === 'postgresql');
-    setConnector(postgresConnector);
+    const supabaseConnector = connectors?.find(c => c.provider === 'supabase');
+    setConnector(supabaseConnector);
   };
 
   const handleNext = async () => {
@@ -92,9 +92,9 @@ export default function SupabaseStep({ next }: { next: () => void }) {
           <CustomSelectButton
             value={connection || ""}
             onValueChange={(value: any) => setConnection(value)}
-            options={connections?.map((conn: { id: any; account_identifier: any; }) => ({
+            options={connections?.map((conn: { id: any; name: any; }) => ({
               id: conn.id,
-              name: conn.account_identifier,
+              name: conn.name,
             })) || []}
             placeholder={`Select connection`}
             isLoading={false}
