@@ -85,9 +85,9 @@ export class MySQLFieldsStrategy implements ConnectionFieldsStrategy {
                             <div>Username: {config.user}</div>
                             <div>SSL: {config.ssl ? "Yes" : "No"}</div>
                         </div>
-                    </div>
-                )}
-            </div>
+                        </div>
+                    )}
+                </div>
         );
     }
 }

@@ -61,12 +61,12 @@ export class SQLServerFieldsStrategy implements ConnectionFieldsStrategy {
                     {connectionStringError && (
                         <div className="text-sm text-red-500">
                             {connectionStringError}
-                        </div>
+                </div>
                     )}
                     {errors?.connectionString && (
                         <div className="text-sm text-red-500">
                             {errors.connectionString}
-                        </div>
+                </div>
                     )}
                     <p className="text-xs text-muted-foreground">
                         Format: sqlserver://username:password@host:port/database?encrypt=true
@@ -83,9 +83,9 @@ export class SQLServerFieldsStrategy implements ConnectionFieldsStrategy {
                             <div>Username: {config.username}</div>
                             <div>SSL/Encryption: {config.ssl ? "Yes" : "No"}</div>
                         </div>
-                    </div>
+                </div>
                 )}
-            </div>
+                </div>
         );
     }
 }

@@ -16,7 +16,10 @@ export type Database = {
     Tables: {
       connections: {
         Row: {
-          config: Json
+          config: Json | null
+          config_public: Json | null
+          config_encrypted: string | null
+          config_iv: string | null
           connector_id: string | null
           created_at: string | null
           id: string
@@ -26,7 +29,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          config: Json
+          config?: Json | null
+          config_public?: Json | null
+          config_encrypted?: string | null
+          config_iv?: string | null
           connector_id?: string | null
           created_at?: string | null
           id?: string
@@ -36,7 +42,10 @@ export type Database = {
           user_id: string
         }
         Update: {
-          config?: Json
+          config?: Json | null
+          config_public?: Json | null
+          config_encrypted?: string | null
+          config_iv?: string | null
           connector_id?: string | null
           created_at?: string | null
           id?: string
@@ -64,7 +73,10 @@ export type Database = {
       }
       connectors: {
         Row: {
-          config: Json
+          config: Json | null
+          config_public: Json | null
+          config_encrypted: string | null
+          config_iv: string | null
           created_at: string | null
           id: string
           is_active: boolean | null
@@ -75,7 +87,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          config: Json
+          config?: Json | null
+          config_public?: Json | null
+          config_encrypted?: string | null
+          config_iv?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
@@ -86,7 +101,10 @@ export type Database = {
           user_id: string
         }
         Update: {
-          config?: Json
+          config?: Json | null
+          config_public?: Json | null
+          config_encrypted?: string | null
+          config_iv?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
@@ -309,60 +327,125 @@ export type Database = {
     Views: {
       connectors_public: {
         Row: {
+          id: string
+          name: string
+          type: string
+          provider: string
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+          icon: string | null
+          description: string | null
+          host: string | null
+          port: string | null
+          database: string | null
+          username: string | null
+          schema: string | null
+          ssl: string | null
+          required_fields: string | null
+          optional_fields: string | null
           auth_url: string | null
+          token_url: string | null
+          redirect_url: string | null
+          scopes: string | null
           client_id: string | null
           code_challenge_required: string | null
+          config_public: Json | null
+        }
+        Insert: {
+          id?: string
+          name?: string
+          type?: string
+          provider?: string
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          icon?: string | null
+          description?: string | null
+          host?: string | null
+          port?: string | null
+          database?: string | null
+          username?: string | null
+          schema?: string | null
+          ssl?: string | null
+          required_fields?: string | null
+          optional_fields?: string | null
+          auth_url?: string | null
+          token_url?: string | null
+          redirect_url?: string | null
+          scopes?: string | null
+          client_id?: string | null
+          code_challenge_required?: string | null
+          config_public?: Json | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          type?: string
+          provider?: string
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          icon?: string | null
+          description?: string | null
+          host?: string | null
+          port?: string | null
+          database?: string | null
+          username?: string | null
+          schema?: string | null
+          ssl?: string | null
+          required_fields?: string | null
+          optional_fields?: string | null
+          auth_url?: string | null
+          token_url?: string | null
+          redirect_url?: string | null
+          scopes?: string | null
+          client_id?: string | null
+          code_challenge_required?: string | null
+          config_public?: Json | null
+        }
+        Relationships: []
+      }
+      connections_public: {
+        Row: {
+          id: string
+          connector_id: string | null
+          name: string
+          config_public: Json | null
+          user_id: string
+          is_active: boolean | null
           created_at: string | null
-          description: string | null
-          icon: string | null
-          id: string | null
-          name: string | null
-          provider: string | null
-          redirect_url: string | null
-          required_fields: Json | null
-          required_parameters: Json | null
-          scopes: Json | null
-          token_url: string | null
-          type: string | null
           updated_at: string | null
         }
         Insert: {
-          auth_url?: never
-          client_id?: never
-          code_challenge_required?: never
+          id?: string
+          connector_id?: string | null
+          name?: string
+          config_public?: Json | null
+          user_id?: string
+          is_active?: boolean | null
           created_at?: string | null
-          description?: never
-          icon?: never
-          id?: string | null
-          name?: string | null
-          provider?: string | null
-          redirect_url?: never
-          required_fields?: never
-          required_parameters?: never
-          scopes?: never
-          token_url?: never
-          type?: string | null
           updated_at?: string | null
         }
         Update: {
-          auth_url?: never
-          client_id?: never
-          code_challenge_required?: never
+          id?: string
+          connector_id?: string | null
+          name?: string
+          config_public?: Json | null
+          user_id?: string
+          is_active?: boolean | null
           created_at?: string | null
-          description?: never
-          icon?: never
-          id?: string | null
-          name?: string | null
-          provider?: string | null
-          redirect_url?: never
-          required_fields?: never
-          required_parameters?: never
-          scopes?: never
-          token_url?: never
-          type?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "connections_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Functions: {
@@ -381,6 +464,97 @@ export type Database = {
       get_user_syncs: {
         Args: { uid: string }
         Returns: string[]
+      }
+      get_connector_with_decrypted_config: {
+        Args: { connector_id: string }
+        Returns: {
+          id: string
+          name: string
+          type: string
+          provider: string
+          config: Json
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      get_connection_with_decrypted_config: {
+        Args: { connection_id: string }
+        Returns: {
+          id: string
+          connector_id: string
+          name: string
+          config_public: Json
+          config_private: Json
+          user_id: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      get_all_connectors_with_decrypted_configs: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          name: string
+          type: string
+          provider: string
+          config: Json
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      get_user_connections_with_decrypted_configs: {
+        Args: { user_uuid: string }
+        Returns: {
+          id: string
+          connector_id: string
+          name: string
+          config_public: Json
+          config_private: Json
+          user_id: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      update_connection_safe: {
+        Args: { connection_id: string; updates: Json }
+        Returns: Json
+      }
+      get_connection_metadata: {
+        Args: { connection_id: string }
+        Returns: {
+          id: string
+          connector_id: string
+          name: string
+          config_public: Json
+          user_id: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      get_user_connections_metadata: {
+        Args: { user_uuid: string }
+        Returns: {
+          id: string
+          connector_id: string
+          name: string
+          config_public: Json
+          user_id: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          connector_name: string
+          connector_provider: string
+          connector_type: string
+        }[]
+      }
+      validate_connection_ownership: {
+        Args: { connection_id: string }
+        Returns: boolean
       }
     }
     Enums: {

@@ -26,19 +26,9 @@ export interface ConnectorWithConnections extends Connector {
 
 export interface Connector {
   id: string;
-  icon: string;
   name: string;
-  description: string;
   type: ConnectorType;
   provider: ConnectorProvider;
-  client_id: string;
-  auth_url: string;
-  token_url: string;
-  redirect_url: string;
-  scopes: string[];
-  required_fields: string[];
-  required_parameters: string[];
-  code_challenge_required: boolean;
   is_active: boolean;
   created_at?: string;
   updated_at?: string;
@@ -48,7 +38,6 @@ export interface Connection {
   id: string;
   connector_id: string;
   name: string;
-  config: Json;
   user_id: string;
   is_active: boolean;
   created_at?: string;
