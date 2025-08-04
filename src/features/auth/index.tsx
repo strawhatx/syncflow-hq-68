@@ -14,7 +14,7 @@ import { RegisterForm } from "./components/RegisterForm";
 import { useAuth } from "./hooks/use-auth";
 
 const Auth = () => {
-  const { user, isLoading, isSubmitting, handleLogin, handleRegister, handleRegisterWithInvite } = useAuth();
+  const { user, isLoading, isSubmitting, handleLogin, handleRegister } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
 
   const loginForm = useForm<LoginFormValues>({

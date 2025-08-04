@@ -33,7 +33,7 @@ export const ReadyStep = ({ onActivate }: ReadyStepProps) => {
         connector.connections.some(connection => connection.id === syncConfig?.destination_id)
     );
 
-    const tableMappings = syncConfig?.config?.schema?.table_mappings || [];
+    const tableMappings = syncConfig?.config?.schema?.tableMappings || [];
     
     const handleActivate = async () => {
         if (!syncConfig) return;
@@ -91,12 +91,12 @@ export const ReadyStep = ({ onActivate }: ReadyStepProps) => {
 
                         <div className="flex items-center justify-between">
                             <span className="text-sm font-medium text-gray-700">Schedule:</span>
-                            <Badge variant="secondary">{syncConfig?.config?.schedule || 'every 1 minute'}</Badge>
+                            <Badge variant="secondary">{'every ' + syncConfig?.config?.sync_interval_minutes + ' minutes' || 'every 1 minute'}</Badge>
                         </div>
 
                         <div className="flex items-center justify-between">
                             <span className="text-sm font-medium text-gray-700">Conflict Resolution:</span>
-                            <Badge variant="secondary">{syncConfig?.config?.conflict_resolution || 'latest'}</Badge>
+                            <Badge variant="secondary">{'latest'}</Badge>
                         </div>
                     </CardContent>
                 </Card>

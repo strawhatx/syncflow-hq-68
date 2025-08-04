@@ -19,6 +19,7 @@ export interface ConnectorConfig {
   icon: string;
 }
 
+// Export this interface so it can be imported
 export interface ConnectorWithConnections extends Connector { 
   connections: Connection[];
 }

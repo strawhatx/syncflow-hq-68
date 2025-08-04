@@ -3,16 +3,35 @@
 import { User } from "@supabase/supabase-js";
 
 export type SyncDirection = 'airtable-to-postgres' | 'postgres-to-airtable' | 'airtable-to-supabase' | 'supabase-to-airtable' | 'two-way';
-export type SyncStatus = 'draft' | 'active' | 'paused' | 'error';
+export type SyncStatus = 'draft' | 'active' | 'paused' | 'error' | 'synced';
+export type SyncStage = 'accounts' | 'mapping' | 'filter' | 'ready';
+
+// Additional types for filtering and mapping
+export interface SyncFilter {
+  field_id: string;
+  value: string;
+  operator: 'eq' | 'ne' | 'gt' | 'lt' | 'contains';
+}
+
+export interface SyncTableMapping {
+  id?: string;
+  source_table_id: string;
+  destination_table_id: string;
+  direction: 'source-to-destination' | 'destination-to-source' | 'two-way';
+  filters?: SyncFilter[];
+  field_mappings?: SyncFieldMapping[];
+}
 export type LogStatus = 'success' | 'error' | 'partial';
 export type SyncProvider = 'airtable' | 'postgresql' | 'supabase';
 
 export interface SyncFieldMapping {
-  id: string;
-  sync_id: string;
-  airtable_field_name: string;
-  postgres_field_name: string;
-  created_at: string;
+  id?: string;
+  sync_id?: string;
+  airtable_field_name?: string;
+  postgres_field_name?: string;
+  source_field_id?: string;
+  destination_field_id?: string;
+  created_at?: string;
 }
 
 export interface SyncLog {
@@ -40,24 +59,33 @@ export interface AirtableConfig {
   table_id: string;
 }
 
+export interface SyncConfig {
+  airtable: AirtableConfig;
+  postgresql?: PostgreSQLConfig;
+  supabase?: PostgreSQLConfig;
+  auto_sync_enabled: boolean;
+  sync_interval_minutes: number;
+  sync_direction: SyncDirection;
+  last_sync_at: string | null;
+  stage?: SyncStage;
+  schema?: {
+    tableMappings: SyncTableMapping[];
+  };
+}
+
 export interface Sync {
   id: string;
   name: string;
   stage: string;
   sync_type?: 'supabase-to-airtable' | 'postgres-to-airtable';
-  config: {
-    airtable: AirtableConfig;
-    postgresql?: PostgreSQLConfig;
-    supabase?: PostgreSQLConfig; // Same config structure as postgresql
-    auto_sync_enabled: boolean;
-    sync_interval_minutes: number;
-    sync_direction: SyncDirection;
-    last_sync_at: string | null;
-  } | null;
+  config: SyncConfig | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
   user_id: string;
+  source_id?: string;
+  destination_id?: string;
+  status?: SyncStatus;
 }
 
 // For compatibility with the syncs feature

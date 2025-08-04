@@ -19,8 +19,8 @@ interface FilterDialogProps {
 
 export const FilterDialog = (props: FilterDialogProps) => {
     const { connector, type, setType, open, setOpen, selectedTableMappingId, setSelectedTableMappingId } = props;
-    const { syncConfig, setTableMappings } = useSync();
-    const tableMappings = syncConfig.config?.schema?.table_mappings
+    const { syncConfig } = useSync();
+    const tableMappings = syncConfig.config?.schema?.tableMappings
     const tableMapping = tableMappings?.find(mapping => mapping.id === selectedTableMappingId);
     const [filters, setFilters] = useState<SyncFilter[]>(tableMapping?.filters?.[type] || []);
     const { data: sourceColumns } = useSourceColumns(tableMapping?.source_table_id);

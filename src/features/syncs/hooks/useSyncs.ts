@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { createInitialSync, fetchSyncsByUserId } from "@/services/syncs/service";
-import { SyncStatus } from "@/types/sync";
+import { SyncStatus, SyncStage } from "@/types/sync";
 
 export type Sync = {
   id: string;
@@ -11,7 +11,7 @@ export type Sync = {
   source?: any;
   destination?: any;
   entityCount?: number;
-  stage?: string;
+  stage?: SyncStage;
   status?: SyncStatus;
   sync_type?: 'supabase-to-airtable' | 'postgres-to-airtable';
 };

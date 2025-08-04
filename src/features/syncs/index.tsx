@@ -61,7 +61,7 @@ const Syncs = () => {
             ) : filteredSyncs.length === 0 ? (
                 <NoResults onGetStarted={handleCreateSync} />
             ) : (
-                <SyncsGrid key="syncs-grid" syncs={filteredSyncs} />
+                <SyncsGrid key="syncs-grid" syncs={filteredSyncs as any} />
             )}
 
             <SyncTypeSelectionModal

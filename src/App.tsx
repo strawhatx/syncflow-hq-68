@@ -7,7 +7,7 @@ import LogsPage from "./pages/Logs";
 import Syncs from "./pages/Syncs";
 import Sync from "./pages/Sync";
 import SyncDetails from "./pages/SyncDetails";
-import ConnectorsPage from "./pages/Connectors";
+// Remove the Connectors import as it doesn't exist
 import OAuthCallback from "./pages/OAuthCallback";
 import NotFound from "./pages/NotFound";
 import IndexPage from "./pages/Index";

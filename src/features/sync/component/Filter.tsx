@@ -68,7 +68,7 @@ export default function FilterStep({ next }: { next: () => void }) {
 
     // sync config
     const { syncConfig, connectors, saveAndAdvance } = useSync();
-    const tableMappings = syncConfig?.config?.schema?.table_mappings;
+    const tableMappings = syncConfig?.config?.schema?.tableMappings;
     const sourceConnector = connectors?.find(connector => connector.connections.some(connection => connection.id === syncConfig?.source_id));
     const destinationConnector = connectors?.find(connector => connector.connections.some(connection => connection.id === syncConfig?.destination_id));
     const connector = type === "source" ? sourceConnector : destinationConnector;
