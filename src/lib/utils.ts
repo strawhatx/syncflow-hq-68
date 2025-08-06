@@ -14,7 +14,7 @@ export const getImagePath = (icon_name: string) => {
  * Extracts secret fields from an object based on key patterns.
  * Returns an object with { secrets, rest }.
  */
-export function extractSecrets<T extends Record<string, any>>(obj: T) {
+export function extractSecrets(obj: Record<string, any>) {
   const secretKeyPatterns = ['password', 'connection_string','connectionstring', 'secret', 'key', 'token', 'api'];
   const secrets: Record<string, any> = {};
   const rest: Record<string, any> = {};

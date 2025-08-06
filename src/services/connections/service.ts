@@ -70,7 +70,7 @@ export const fetchConnectionById = async (id: string) => {
 };
 
 export const createConnection = async (connection: any) => {
-    const { secrets, rest: connectionWithoutSecrets } = extractSecrets(connection.config);
+    const { secrets, rest: connectionWithoutSecrets } = extractSecrets(connection.config_public);
 
     // setup configs and secrets
     connection.config_public = connectionWithoutSecrets;
@@ -83,31 +83,13 @@ export const createConnection = async (connection: any) => {
 };
 
 export const updateConnection = async (id: string, updates: any) => {
+    const { secrets, rest: connectionWithoutSecrets } = extractSecrets(updates.config_public);
+
+    // setup configs and secrets
+    updates.config_public = connectionWithoutSecrets;
+    updates.secrets = secrets;
+
     const { data, error } = await supabase.from('connections').update(updates).eq('id', id).select().single();
     if (error) throw error;
     return data;
-};
-
-// Function to get connection with decrypted config (for backend use)
-export const getConnectionWithDecryptedConfig = async (connectionId: string) => {
-    const { data, error } = await supabase
-        .rpc('get_connection_with_decrypted_config', { connection_id: connectionId });
-
-    if (error) {
-        throw error;
-    }
-
-    return data?.[0] || null;
-};
-
-// Function to get user connections with decrypted configs
-export const getUserConnectionsWithDecryptedConfigs = async (userId: string) => {
-    const { data, error } = await supabase
-        .rpc('get_user_connections_with_decrypted_configs', { user_uuid: userId });
-
-    if (error) {
-        throw error;
-    }
-
-    return data || [];
 };

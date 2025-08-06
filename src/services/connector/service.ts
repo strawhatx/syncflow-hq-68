@@ -1,14 +1,23 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Connector } from "@/types/connectors";
+import { ConnectorWithConnections, ConnectorType, ConnectorProvider } from "@/types/connectors";
 
-export const fetchConnectors = async (): Promise<Connector[]> => {
+export const fetchConnectors = async (): Promise<ConnectorWithConnections[]> => {
   const { data: connectors, error } = await supabase
     .from('connectors_public')
-    .select('*');
+    .select(`
+      *,
+      connections:connections(*)
+    `);
 
   if (error) {
     throw error;
   }
 
-  return connectors || [];
-};
+  // convert the code_challenge_required to a boolean and cast type to ConnectorType
+  return connectors.map((connector) => ({
+    ...connector,
+    type: connector.type as ConnectorType,
+    provider: connector.provider as ConnectorProvider,
+    code_challenge_required: connector.code_challenge_required === 'true'
+  })) || [];
+}; 

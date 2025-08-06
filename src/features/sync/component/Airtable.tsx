@@ -92,9 +92,10 @@ export default function AirtableStep({ next }: { next: () => void }) {
           <CustomSelectButton
             value={connection || ""}
             onValueChange={(value: any) => setConnection(value)}
-            options={connections?.map((conn: { id: any; account_identifier: any; }) => ({
+            options={connections?.map((conn: { id: any; name: any; }) => ({
               id: conn.id,
-              name: conn.account_identifier,
+              name: conn.name,
+              icon: "airtable-icon",
             })) || []}
             placeholder={`Select connection`}
             isLoading={false}

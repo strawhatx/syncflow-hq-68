@@ -95,10 +95,20 @@ class ApiKeyActionsStrategy implements ConnectionActionsStrategy {
             if (action === "create") {
                 // For user-based connections, we'll use the user ID as the team ID
                 // This maintains compatibility with the existing service
-                await createConnection(userId || "", connector, config);
+                await createConnection({ 
+                    connector_id: connector.id, 
+                    name: config.name, 
+                    user_id: userId || "",
+                    config_public: config 
+                });
             }
             else {
-                await updateConnection(connection_id, connector, config);
+                await updateConnection(connection_id, {
+                    connector_id: connector.id,
+                    name: config.name,
+                    user_id: userId || "",
+                    config_public: config
+                });
             }
 
             toast({

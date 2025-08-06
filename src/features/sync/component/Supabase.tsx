@@ -95,6 +95,7 @@ export default function SupabaseStep({ next }: { next: () => void }) {
             options={connections?.map((conn: { id: any; name: any; }) => ({
               id: conn.id,
               name: conn.name,
+              icon: "supabase-icon",
             })) || []}
             placeholder={`Select connection`}
             isLoading={false}
@@ -111,6 +112,7 @@ export default function SupabaseStep({ next }: { next: () => void }) {
           options={databases?.map((db: { id: any; name: any; }) => ({
             id: db.id,
             name: db.name,
+            icon: "supabase-icon",
           })) || []}
           placeholder={`Select database`}
           isLoading={false}

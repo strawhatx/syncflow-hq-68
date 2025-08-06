@@ -27,6 +27,8 @@ export interface ConnectorWithConnections extends Connector {
 export interface Connector {
   id: string;
   name: string;
+  icon: string;
+  description: string;
   type: ConnectorType;
   provider: ConnectorProvider;
   is_active: boolean;

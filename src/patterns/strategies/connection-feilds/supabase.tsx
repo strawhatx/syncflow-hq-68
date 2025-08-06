@@ -42,6 +42,7 @@ export class SupabaseFieldsStrategy implements ConnectionFieldsStrategy {
                     <Label htmlFor="api_key">API Key</Label>
                     <Input
                         id="api_key"
+                        type="password"
                         placeholder="sb_**********************"
                         value={config.api_key || ""}
                         onChange={(e) => setConfig({ ...config, api_key: sanitizeField(e.target.value, "apiKey") })}
