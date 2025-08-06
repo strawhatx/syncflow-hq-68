@@ -185,27 +185,6 @@ CREATE POLICY "Users can view all connectors"
     FOR SELECT
     USING (true);
 
-CREATE POLICY "Users can create their connectors"
-    ON public.connectors
-    FOR INSERT
-    WITH CHECK (
-        user_id = auth.uid()
-    );
-
-CREATE POLICY "Users can update their connectors"
-    ON public.connectors
-    FOR UPDATE
-    USING (
-        user_id = auth.uid()
-    );
-
-CREATE POLICY "Users can delete their connectors"
-    ON public.connectors
-    FOR DELETE
-    USING (
-        user_id = auth.uid()
-    );
-
 -- Field mapping policies
 CREATE POLICY "Users can view their field mappings"
     ON public.field_mapping
@@ -242,18 +221,6 @@ BEGIN
     RETURN ARRAY(
         SELECT id
         FROM public.connections
-        WHERE user_id = uid
-    );
-END;
-$$ LANGUAGE plpgsql
-SET search_path = public;
-
-CREATE OR REPLACE FUNCTION public.get_user_syncs(uid uuid)
-RETURNS uuid[] AS $$
-BEGIN
-    RETURN ARRAY(
-        SELECT id
-        FROM public.syncs
         WHERE user_id = uid
     );
 END;

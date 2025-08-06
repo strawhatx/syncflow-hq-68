@@ -164,13 +164,16 @@ serve(async (req) => {
     const tokenData = await tokenResponse.json() as TokenResponse;
 
     const connectionConfig = {
-      access_token: tokenData.access_token,
-      refresh_token: tokenData.refresh_token,
-      expires_at: tokenData.expires_in ? Date.now() + tokenData.expires_in * 1000 : null,
       provider,
       ...params,
       timestamp: new Date().toISOString()
     };
+
+    const secretsConfig = {
+      access_token: tokenData.access_token,
+      refresh_token: tokenData.refresh_token,
+      expires_at: tokenData.expires_in ? Date.now() + tokenData.expires_in * 1000 : null,
+    }
 
     // Upsert connection record (create if doesn't exist, update if it does)
     const { data, error } = await supabase
@@ -180,7 +183,8 @@ serve(async (req) => {
         name: connectionName,
         is_active: true,
         team_id,
-        config: connectionConfig
+        config_public: connectionConfig,
+        secrets: secretsConfig
       }], {
         onConflict: 'team_id,connector_id,name'
       })

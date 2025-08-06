@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { fetchWithAuth } from "@/lib/api";
 import { ConnectorProvider, ColumnOption, TableOption } from "@/types/connectors";
+import { extractSecrets } from "@/lib/utils";
 
 // Define simple types for missing interfaces
 export interface ConnectionDatabase {
@@ -14,7 +15,7 @@ export interface ConnectionColumn {
 }
 
 export const fetchConnections = async () => {
-  const { data, error } = await supabase.from('connections').select('*');
+  const { data, error } = await supabase.from('connections_public').select('*');
   if (error) throw error;
   return data;
 };
@@ -63,12 +64,19 @@ export const fetchColumnsByTableId = async (table_id: string): Promise<ColumnOpt
 
 // Add missing functions for compatibility
 export const fetchConnectionById = async (id: string) => {
-    const { data, error } = await supabase.from('connections').select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('connections_public').select('*').eq('id', id).single();
     if (error) throw error;
     return data;
 };
 
 export const createConnection = async (connection: any) => {
+    const { secrets, rest: connectionWithoutSecrets } = extractSecrets(connection.config);
+
+    // setup configs and secrets
+    connection.config_public = connectionWithoutSecrets;
+    connection.secrets = secrets;
+
+    // Insert the connection without secrets
     const { data, error } = await supabase.from('connections').insert(connection).select().single();
     if (error) throw error;
     return data;
